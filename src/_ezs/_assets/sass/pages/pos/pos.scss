@@ -1,0 +1,68 @@
+    // Initialization of global variables, mixins and functions
+    @import "../../init";
+    .wizard {
+        &-pos {
+            position: relative;
+            min-height: 100%;
+        }
+        &-nav {
+            position: fixed;
+            width: calc(100% - 70px);
+            top: 142px;
+            left: 70px;
+            background: $page-bg;
+            z-index: 95;
+        }
+        &-steps {
+            position: relative;
+            padding-top: 15px;
+            &--btn {
+                position: absolute;
+                right: 0;
+                bottom: 8px;
+            }
+        }
+        &-step {
+            display: flex;
+            a {
+                background-color: #F3F6F9;
+                border-top-left-radius: 0.5rem;
+                border-top-right-radius: 0.5rem;
+                display: block;
+                padding: 10px 1.5rem;
+                margin-right: 5px;
+                color: #3F4254;
+                min-width: 100px;
+                text-align: center;
+                font-size: 14px;
+                &.active {
+                    background: $white;
+                    color: $primary;
+                }
+            }
+        }
+        &-body {
+            margin-top: 54px;
+            height: calc(100% - 56px);
+            >div {
+                height: 100%;
+            }
+        }
+    }
+    
+    @include media-breakpoint-down(xl) {
+        .wizard {
+            &-step {
+                a {
+                    min-width: auto;
+                }
+            }
+        }
+    }
+    
+    @include media-breakpoint-up(lg) {
+        .subheader-fixed:not(.aside-minimize) .wizard-nav {
+            left: 265px;
+            width: calc(100% - 265px);
+        }
+    }

@@ -1,0 +1,328 @@
+@import "../init";
+// fontsize
+$font-size-title: 20px;
+$font-size-base-print: 15px !default;
+// line-height
+$line-height-title: 23.44px;
+$line-height-receipt: 29.3px;
+$line-height-base-print: 17.58px;
+
+// font-weight
+//Table Colors 
+@each $color,
+$value in $theme-colors {
+    .table-bordered-#{$color} {
+
+        th,
+        td {
+            border: 1px solid $value !important;
+            color: $black !important;
+        }
+    }
+}
+
+$print-sizes: ("10": 10px, "11": 11px, "12": 12px, "xs": 13px, "sm": 14px, "15": 15px, "md":16px, "lg":18px, "xl":26px, );
+
+@each $name,
+$value in $print-sizes {
+    .print-size-#{$name} {
+        font-size: $value !important;
+    }
+}
+//borderbottom
+@each $name,
+$value in $theme-colors {
+    .border-bottom-#{$name} {
+        border-bottom:  1px solid $value !important;
+    }
+}
+
+
+.print-ezs {
+    background: $body-bg;
+    line-height: $line-height-base-print;
+    color: $black;
+    font-weight: $font-weight-normal;
+
+    .print-title {
+        line-height: $line-height-title;
+    }
+
+    .print-address {
+        text-transform: capitalize;
+    }
+
+}
+
+.into-money-discount {
+    text-decoration: line-through;
+}
+
+.border-bottom {
+    border-bottom: 1px dotted #000 !important;
+}
+
+// K58-------------------các mẫu k58
+.print-k58 {
+	padding-left:1rem !important;
+    font-size: $font-size-base-print - 1;
+    font-family: Tahoma;
+
+    .print-logo {
+        img {
+            width: 128px;
+        }
+    }
+
+    .body-print {
+        .print-infor {
+            .name-user-item {
+                width: 100px;
+            }
+
+            .name-hotline-item {
+                @extend .name-user-item;
+            }
+
+            .name-address-item {
+                @extend .name-user-item;
+            }
+        }
+    }
+
+    .print-receipt {
+        line-height: $line-height-receipt;
+    }
+
+    .print-footer {
+        .text-see {
+            font-size: $font-size-base-print - 3;
+        }
+    }
+    .print-date {
+        margin-top: -5px;
+    }
+}
+.pr-104r {
+    padding-right: 1.4rem !important;
+}
+
+
+.print-k58t { 
+    .print-infor {
+        border-bottom: 1px solid #000;
+    }
+    .w-left--calc {
+        width: calc(100% - 80px);
+    }
+    .print-date {
+        margin-top: -5px;
+    }
+    .print-signature {
+        border-top: 1px solid #000;
+    }
+}
+ .print-k58ttkh {
+     @extend .print-k58t;
+ }
+ .print-k58dv {
+    .w-left--calc {
+        width: calc(100% - 100px);
+    }
+ }
+.print-k58x {
+    .w-left--calc {
+        width: calc(100% - 100px);
+    }
+}
+.print-k58x {
+    .table {
+        .w-quantity {
+            padding: 0.25rem !important;
+        }
+    }
+}
+
+.table th.w-quantity {
+    padding: 1rem !important;
+}
+// K80-------------------các mẫu k80
+
+.print-k80 {
+	padding-left: 1rem;
+    font-size: $font-size-base-print !important;
+    font-family: Tahoma;
+
+    .text-see {
+        font-size: $font-size-base-print;
+    }
+}
+.print-k80t {
+    .print-infor {
+        border-bottom: 1px solid #000;
+    }
+    .w-left--calc {
+        width: calc(100% - 80px);
+    }
+    .print-date {
+        margin-top: -5px;
+    }
+    .print-signature {
+        border-top: 1px solid #000;
+    }
+    .print-date {
+        margin-top: 0;
+    }
+}
+.print-k80ttkh {
+    @extend .print-k80t;
+    
+}
+
+// a5-------------------các mẫu a5
+.print-A5 {
+
+    padding: 5% 5% 5% 8%!important;
+    font-size: $font-size-base-print !important;
+    h4 {
+        font-size: $font-size-base-print + 4;
+    }
+     
+    
+
+    .print-infor {
+        .name-user {
+            >div:last-child {
+                width: calc(100% - 200px);
+            }
+        }
+
+        .name-hotline {
+            @extend .name-user;
+        }
+
+        .name-address {
+            @extend .name-user;
+        }
+    }
+
+}
+.print-A5T {
+    .print-infor {
+        border-bottom: 1px solid #000;
+    }
+    .print-date {
+        margin-top: -5px;
+    }
+    .print-signature {
+        border-top: 1px solid #000;
+    }
+    .print-date {
+        margin-top: 0;
+    }
+}
+
+.print-A4x {
+    .table th.w-quantity {
+        width: 100px !important;
+    }
+}
+.print-A5Ttkh {
+    @extend .print-A5T;
+}
+.print-A5x {
+    .w-left--calc {
+        width: calc(100% - 150px);
+    }
+}
+.print-A5xuatkho,
+.print-A4xuatkho {
+    @extend .print-A5x;
+}
+.print-A4x {
+    @extend .print-A5x;
+}
+.print-A4 {
+    font-size: $font-size-base-print + 1  !important;
+    padding: 5% 10% 5% 12%!important;
+}
+.print-A4T {
+    .print-infor {
+        border-bottom: 1px solid #000;
+    }
+    .w-left--calc {
+        width: calc(100% - 150px);
+    }
+    .print-signature {
+        border-top: 1px solid #000;
+    }
+} 
+.print-A4TTKH {
+    @extend .print-A4T;
+}
+
+
+
+@media print {
+
+    html,
+    body {
+        overflow: initial !important;
+        -webkit-print-color-adjust: exact;
+        min-height: 100%;
+    }
+
+    .print-ezs {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        margin-bottom: 20mm;
+        padding: 0 2px;
+        page-break-before: auto;
+        page-break-after:always;
+        page-break-inside: auto;
+        
+        &.print-A5 {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            .print-body {
+                flex-grow: 1;
+            }
+        }
+        &.print-A4 {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            .print-body {
+                flex-grow: 1;
+            }
+        }
+
+    }
+    
+    .pay-money,
+     .history-total,
+        .print-footer
+      {
+        page-break-after: always;
+        page-break-inside:avoid;
+    }
+
+    table {
+        page-break-inside: auto;
+    }
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    thead {
+        display: table-header-group;
+    }
+    tfoot {
+        display: table-footer-group;
+    }
+}
+

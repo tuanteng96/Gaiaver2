@@ -1,0 +1,230 @@
+//
+// Table
+//
+.table {
+    thead {
+        th,
+        td {
+            font-weight: $table-head-font-weight;
+            // font-size: $table-head-font-size;
+            border-bottom-width: 1px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+    }
+    &.table-head-borderless {
+        thead {
+            th,
+            td {
+                border-top: 0;
+            }
+        }
+    }
+    &.table-head-solid {
+        thead {
+            th,
+            td {
+                background-color: $table-head-bg;
+            }
+        }
+    }
+    &.table-light {
+        @each $name,
+        $color in $theme-colors {
+            &-#{$name} {
+                thead {
+                    tr {
+                        color: $color;
+                        background-color: rgba($color, 0.1);
+                    }
+                }
+            }
+        }
+    }
+    &.table-head-custom {
+        thead {
+            tr,
+            th {
+                font-weight: $table-compact-head-font-weight;
+                color: $table-compact-head-color !important;
+                font-size: $table-compact-head-font-size;
+                text-transform: $table-compact-head-text-transform;
+                letter-spacing: $table-compact-head-letter-spacing;
+            }
+        }
+    }
+    &.table-foot-custom {
+        tfoot {
+            th,
+            td {
+                font-weight: $table-compact-head-font-weight;
+                color: $table-compact-head-color !important;
+                font-size: $table-compact-head-font-size;
+                text-transform: $table-compact-head-text-transform;
+                letter-spacing: $table-compact-head-letter-spacing;
+            }
+        }
+    }
+    &.table-head-bg {
+        thead {
+            tr,
+            th {
+                background-color: $table-head-bg;
+                border-bottom: 0;
+                letter-spacing: 1px;
+                &:first-child {
+                    border-top-left-radius: $border-radius;
+                    border-bottom-left-radius: $border-radius;
+                }
+                &:last-child {
+                    border-top-right-radius: $border-radius;
+                    border-bottom-right-radius: $border-radius;
+                }
+            }
+        }
+    }
+    &.table-foot-bg {
+        tfoot {
+            th,
+            td {
+                border-bottom: 0;
+                background-color: $gray-100;
+                &:first-child {
+                    border-top-left-radius: $border-radius;
+                    border-bottom-left-radius: $border-radius;
+                }
+                &:last-child {
+                    border-top-right-radius: $border-radius;
+                    border-bottom-right-radius: $border-radius;
+                }
+            }
+        }
+    }
+    &.table-separate {
+        th,
+        td {
+            border-top: 0;
+            border-bottom: 1px solid $table-border-color;
+            &:first-child {
+                padding-left: 0 !important;
+            }
+            &:last-child {
+                padding-right: 0 !important;
+            }
+        }
+        tfoot {
+            th,
+            td {
+                border-bottom: 0;
+                border-top: 1px solid $table-border-color;
+            }
+        }
+        tbody {
+            tr:last-child {
+                td {
+                    border-bottom: 0;
+                }
+            }
+        }
+    }
+    &.table-bordered {
+        tfoot {
+            th,
+            td {
+                border-bottom: 0;
+            }
+        }
+        thead {
+            th,
+            td {
+                border-bottom-width: 2px;
+            }
+        }
+    }
+    &.table-vertical-center {
+        th,
+        td {
+            vertical-align: middle;
+        }
+    }
+}
+
+.table:not(.table-bordered) {
+    thead {
+        th,
+        td {
+            border-top: 0;
+        }
+    }
+}
+
+@include media-breakpoint-down(xs) {
+    .table-responsive-attr {
+        table {
+            thead {
+                display: none;
+            }
+            tbody,
+            tr,
+            td {
+                display: block;
+            }
+            tr {
+                border-left: $table-border-width solid $table-border-color;
+                border-right: $table-border-width solid $table-border-color;
+                border-bottom: $table-border-width solid $table-border-color;
+            }
+            tr {
+                position: relative;
+                margin-bottom: 15px;
+                td {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    padding-left: 40%;
+                    padding-top: 1rem;
+                    padding-bottom: 1rem;
+                    padding-right: 1rem;
+                    min-height: 45px;
+                    &:before {
+                        content: attr(data-title);
+                        position: absolute;
+                        left: 12px;
+                    }
+                    &[data-action="true"] {
+                        padding-left: 1rem;
+                        justify-content: center;
+                    }
+                }
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+}
+
+.table-fixed-header {
+    table {
+        thead {
+            th {
+                border-bottom: 1px solid $table-border-color;
+                border-top: 1px solid $table-border-color;
+                top: 0;
+                left: 0;
+                z-index: 2;
+                position: sticky;
+                background-color: $white;
+            }
+        }
+    }
+}
+
+.react-bootstrap-table.table-responsive table {
+    table-layout: auto;
+}
+
+.table-layout-auto {
+    table-layout: auto !important;
+}

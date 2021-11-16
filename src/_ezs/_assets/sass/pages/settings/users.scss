@@ -1,0 +1,19 @@
+@import "../../init";
+.Accordion-Permission {
+    &__head {
+        background: #fff6ee;
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        &::before {
+            content: "";
+            position: absolute;
+            width: 4px;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: #ffc58d;
+        }
+    }
+}

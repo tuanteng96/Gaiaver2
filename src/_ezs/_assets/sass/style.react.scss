@@ -1,0 +1,79 @@
+//
+// Main Styles
+//
+////////////////////////////////////////////////////////////////
+///////////// DO NOT MODIFY BELOW INCLUDE ORDER ////////////////
+////////////////////////////////////////////////////////////////
+// 1: Initialize
+@import "init";
+// 2: Bootstrap/Material framework includes
+@import "~bootstrap/scss/bootstrap";
+@import "vendors/react/material-ui/general";
+//
+// Main Style
+//
+////////////////////////////////////////////////////////////////
+///////////// DO NOT MODIFY BELOW INCLUDE ORDER ////////////////
+////////////////////////////////////////////////////////////////
+// 1: Initialize
+@import "init";
+// 2: Bootstrap framework includes
+@import "~bootstrap/scss/bootstrap";
+// 3: Components
+@import "components/utilities",
+"components/burger-icon",
+"components/card",
+"components/wizard",
+"components/type",
+"components/nav",
+"components/alert",
+"components/buttons",
+"components/code",
+"components/dropdown",
+"components/forms",
+"components/grid",
+"components/modal",
+"components/progress",
+"components/table",
+"components/popover",
+"components/tooltip",
+"components/datatable",
+"components/checkbox",
+"components/radio",
+"components/switch",
+"components/option",
+"components/dialog",
+"components/strikethrough",
+"components/separator",
+"components/image-input",
+"components/label",
+"components/loader",
+"components/symbol",
+"components/pulse",
+"components/page-loader",
+"components/quick-search",
+"components/spinner",
+"components/sticky-toolbar",
+"components/overlay",
+"components/list",
+"components/bullet",
+"components/navi",
+"components/ribbon",
+"components/toggle",
+"components/datatable";
+// 4: Plugins
+@import "vendors/plugins/formvalidation",
+"vendors/plugins/dropzone",
+"vendors/plugins/perfect-scrollbar",
+"vendors/plugins/prismjs",
+"vendors/plugins/apexcharts",
+"vendors/plugins/sweetalert2",
+"vendors/plugins/react-select",
+"vendors/plugins/toastify",
+"vendors/plugins/datepicker",
+"vendors/plugins/ckeditor";
+// 5: Layout
+@import "layout/init";
+////////////////////////////////////////////////////////////////
+///////////// DO NOT MODIFY ABOVE INCLUDE ORDER ////////////////
+////////////////////////////////////////////////////////////////

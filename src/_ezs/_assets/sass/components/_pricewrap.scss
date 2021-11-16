@@ -1,0 +1,31 @@
+.price-wrap {
+    display: flex;
+    flex-direction: column;
+    .sales {
+        display: none;
+    }
+    .cost {
+        font-size: $h1-font-size;
+        color: $dark;
+        font-weight: $font-weight-boldest;
+        sub {
+            font-size: $h3-font-size;
+        }
+    }
+    &.price-wrap-sale {
+        .sales {
+            display: block;
+            order: 2;
+            font-size: $h1-font-size;
+            color: $dark;
+            font-weight: $font-weight-boldest;
+        }
+        .cost {
+            order: 1;
+            font-size: $h5-font-size;
+            text-decoration: line-through;
+            color: $gray-500;
+            font-weight: $font-weight-bold;
+        }
+    }
+}

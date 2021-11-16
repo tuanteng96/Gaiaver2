@@ -1,0 +1,35 @@
+@import "../../init";
+//
+// React Bootstrap Table2
+//
+.table-TGDown {
+    table {
+        .expand-cell-header {
+            width: 40px;
+        }
+        .expand-cell {
+            cursor: pointer;
+            i {
+                transition: .2s ease-in-out;
+            }
+            .show {
+                i {
+                    transform: rotate( 90deg);
+                }
+            }
+        }
+        .parent {
+            background: $gray-100;
+        }
+        .current {
+            -webkit-box-shadow: 0px 10px 15px 1px rgb(0 0 0 / 5%);
+            box-shadow: 0px 10px 15px 1px rgb(0 0 0 / 5%);
+            border-left: 1px solid $table-border-color;
+            border-right: 1px solid $table-border-color;
+            .row-expansion-style {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+        }
+    }
+}

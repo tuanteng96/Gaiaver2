@@ -1,4 +1,4 @@
-export default function setupAxios(axios) {
+export default function setupAxios(axios, store) {
 
     // Request interceptor for API calls
     axios.interceptors.request.use(
