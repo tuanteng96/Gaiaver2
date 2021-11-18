@@ -7,7 +7,7 @@ import TeachingCrud from "./_redux/teachingCrud";
 import TeachingList from "./TeachingList/TeachingList";
 import "../../_ezs/_assets/sass/pages/teaching/_teaching.scss";
 
-// const delay = 15;
+const delay = 15;
 
 const fpPromise = FingerprintJS.load({
   token: window.MachineToken || process.env.REACT_APP_TOKEN_FB,
@@ -24,13 +24,13 @@ function TeachingPage(props) {
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     loginMechine();
-  //   }, 3000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loginMechine();
+    }, 3000);
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (Token && MachineUser) {
