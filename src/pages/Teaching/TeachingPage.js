@@ -7,36 +7,34 @@ import TeachingCrud from "./_redux/teachingCrud";
 import TeachingList from "./TeachingList/TeachingList";
 import "../../_ezs/_assets/sass/pages/teaching/_teaching.scss";
 
-// const delay = 15;
+const delay = 5;
 
 const fpPromise = FingerprintJS.load({
   token: window.MachineToken || process.env.REACT_APP_TOKEN_FB,
 });
 
 function TeachingPage(props) {
-  const [listTeaching, setListTeaching] = useState([null]);
+  const [listTeaching, setListTeaching] = useState(null);
   const { MachineCode, MachineUser, Token } = useSelector(({ teaching }) => ({
     Token: teaching.Token, // lấy trong store.js
     MachineCode: teaching.MachineCode,
     MachineUser: teaching.MachineUser,
   }));
 
-
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     loginMechine();
-  //   }, 3000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkMechine();
+    }, delay * 60 * 1000);
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => clearInterval(interval); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (Token && MachineUser) {
       loginMechine();
     } else {
-      return 
       Swal.fire({
         title: "Cảnh báo truy cập",
         text: "Chức năng chỉ cho phép duy nhất một máy tính truy cập. Nếu đây là máy tính cá nhân sẽ sử dụng đê dạy học Online vui lòng xác nhận để bắt đầu sử dụng!",
@@ -79,13 +77,28 @@ function TeachingPage(props) {
                     allowOutsideClick: false,
                   });
                   setListTeaching([0]);
-                } catch (error) {
-                  console.log(error);
+                } catch ({ response }) {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Xảy ra lỗi !",
+                    html: `<div>Không thể đăng ký truy cập cho máy tính này. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${response.data.error}</div>`,
+                    customClass: {
+                      confirmButton: "btn btn-success",
+                    },
+                    allowOutsideClick: false,
+                  }).then(() => (window.location.href = "/"));
                 }
               })
-              .catch((error) => {
-                //
-                console.log(error);
+              .catch(({ response }) => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Xảy ra lỗi !",
+                  html: `<div>Không thể xác định được máy truy cập. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${response.data.error}</div>`,
+                  customClass: {
+                    confirmButton: "btn btn-success",
+                  },
+                  allowOutsideClick: false,
+                }).then(() => (window.location.href = "/"));
               });
           });
         },
@@ -168,11 +181,63 @@ function TeachingPage(props) {
       });
     } else {
       try {
+        await TeachingCrud.checkMachine({
+          MachineKey: MachineCode,
+        });
         // Get API List bài học
         setListTeaching([0]);
-      } catch (error) {
-        console.log(error);
+      } catch ({ response }) {
+        Swal.fire({
+          icon: "error",
+          title: "Xảy ra lỗi !",
+          html: `<div>Không thể đăng ký truy cập cho máy tính này. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${response.data.error}</div>`,
+          customClass: {
+            confirmButton: "btn btn-success",
+          },
+          allowOutsideClick: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/";
+          }
+        });
       }
+    }
+  };
+
+  const checkMechine = async () => {
+    let newMechine = MachineCode;
+
+    try {
+      if (!newMechine) {
+        await fpPromise
+          .then((fp) => fp.get())
+          .then(async (result) => {
+            const { visitorId } = result;
+            newMechine = visitorId;
+            const action = setMachine(visitorId);
+            dispatch(action);
+          });
+      }
+      await TeachingCrud.checkMachine({
+        MachineKey: MachineCode,
+      });
+      setListTeaching([0]);
+      Swal.closeModal();
+    } catch ({ response }) {
+      setListTeaching(null);
+      Swal.fire({
+        icon: "error",
+        title: "Xảy ra lỗi !",
+        html: `<div>Không thể đăng ký truy cập cho máy tính này. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${response.data.error}</div>`,
+        customClass: {
+          confirmButton: "btn btn-success",
+        },
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/";
+        }
+      });
     }
   };
 

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const Token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUb2tlbklEIjoiMTk1IiwibmJmIjoxNjM3MTIxOTgxLCJleHAiOjE2Njg2NTc5ODEsImlhdCI6MTYzNzEyMTk4MX0.86hbR0mWk-7sdnkJjuWTF6kinSJZirbiqmQ2pePOwAg";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUb2tlbklEIjoiMjczIiwibmJmIjoxNjM3MjA2MzcyLCJleHAiOjE2Njg3NDIzNzIsImlhdCI6MTYzNzIwNjM3Mn0.BrbVYxayo5NONwkk6gDW44ohKIR__HDQqMBcqUHwAQ0";
 
 const initialState = {
   Token:
@@ -9,7 +9,8 @@ const initialState = {
       ? Token
       : window.Token,
   MachineCode: localStorage.getItem("_MachineCode") || "",
-  MachineUser: (window.User && window.User.MachineKey) || "",
+  MachineUser:
+    (window.User && window.User.MachineKey) || "TnQ4j2okdLTaauoEKQFk",
 };
 
 export const teachingSlice = createSlice({
