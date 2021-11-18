@@ -7,21 +7,36 @@ import TeachingCrud from "./_redux/teachingCrud";
 import TeachingList from "./TeachingList/TeachingList";
 import "../../_ezs/_assets/sass/pages/teaching/_teaching.scss";
 
+// const delay = 15;
+
+const fpPromise = FingerprintJS.load({
+  token: window.MachineToken || process.env.REACT_APP_TOKEN_FB,
+});
+
 function TeachingPage(props) {
-  const [listTeaching, setListTeaching] = useState([0]);
+  const [listTeaching, setListTeaching] = useState([null]);
   const { MachineCode, MachineUser, Token } = useSelector(({ teaching }) => ({
     Token: teaching.Token, // lấy trong store.js
     MachineCode: teaching.MachineCode,
     MachineUser: teaching.MachineUser,
   }));
 
+
   const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     loginMechine();
+  //   }, 3000);
+
+  //   return () => clearInterval(interval);
+  // }, []);
 
   useEffect(() => {
     if (Token && MachineUser) {
       loginMechine();
     } else {
-      return false;
+      return 
       Swal.fire({
         title: "Cảnh báo truy cập",
         text: "Chức năng chỉ cho phép duy nhất một máy tính truy cập. Nếu đây là máy tính cá nhân sẽ sử dụng đê dạy học Online vui lòng xác nhận để bắt đầu sử dụng!",
@@ -40,9 +55,6 @@ function TeachingPage(props) {
           // Là function và return  ra Promise
           return new Promise(function (resolve, reject) {
             // sử lý lấy token trên máy
-            const fpPromise = FingerprintJS.load({
-              token: window.MachineToken || process.env.REACT_APP_TOKEN_FB,
-            });
             fpPromise
               .then((fp) => fp.get())
               .then(async (result) => {
@@ -82,13 +94,6 @@ function TeachingPage(props) {
         const { isDismissed } = result;
         if (isDismissed) {
           window.location.href = "/";
-          // Swal.fire({
-          //     text:"cám ơn bạn đã truy cập ứng dụng!",
-          //     icon: "question",
-          //     customClass: {
-          //         confirmButton: "btn btn-success",
-          //       },
-          // });
         }
       });
     }
@@ -96,8 +101,15 @@ function TeachingPage(props) {
 
   const loginMechine = async () => {
     //Token, MachineCode không khớp thì chạy try, catch dưới
-
-    if (MachineUser !== MachineCode) {
+    if (!MachineCode) {
+      fpPromise
+        .then((fp) => fp.get())
+        .then(async (result) => {
+          const { visitorId } = result;
+          const action = setMachine(visitorId);
+          dispatch(action);
+        });
+    } else if (MachineUser !== MachineCode) {
       Swal.fire({
         title: "Truy cập bị cấm",
         html: `<div class="p-1">
@@ -122,7 +134,6 @@ function TeachingPage(props) {
           return new Promise(function (resolve, reject) {
             TeachingCrud.sendPermission({ UserDesc: val })
               .then((data) => {
-                console.log(data);
                 resolve();
               })
               .catch((error) => console.log(error));
