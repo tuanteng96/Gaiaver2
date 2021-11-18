@@ -65,6 +65,12 @@
             color: $primary;
         }
     }
+    &.navbar-nav.no-borders {
+        flex-direction: row;
+    }
+    &#side-menu {
+        flex-direction: column;
+    }
 }
 
 // Font Weight Options

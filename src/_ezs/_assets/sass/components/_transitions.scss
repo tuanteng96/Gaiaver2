@@ -1,0 +1,6 @@
+.collapse.in:not(.show) {
+    display: block;
+}
+.dropdown-toggle:after {
+    display: none;
+}
