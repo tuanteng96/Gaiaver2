@@ -46,7 +46,7 @@ function TeachingList(props) {
         <div className="col-md-8">
           <div className="hpanel hgreen">
             <div class="panel-heading hbuilt">
-              <div className="card card-custom">
+              <div className="card card-custom gutter-b">
                 <div className="card-body px-5">
                   <div className="d-flex align-items-center mr-2 py-2">
                     <h3 className="font-weight-boild mr-10">Chọn khối</h3>
@@ -84,6 +84,11 @@ function TeachingList(props) {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div className="card card-custom d-flex flex-grow-1">
+                <div className="card-body flex-grow-1">
+
                 </div>
               </div>
             </div>
