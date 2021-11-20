@@ -38,7 +38,7 @@ const fechData = [
           "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
       },
       {
-        Title: "Khung Trường Tiểu Học chuẩn tháng 9 Online",
+        Title: "Khung Trường Tiểu Học chuẩn tháng 9 Online Khung Trường Tiểu Học chuẩn tháng 9 Online",
         Image:
           "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
       },
@@ -287,14 +287,13 @@ function TeachingList(props) {
       </div>
       <div className="row">
         <div className="col-md-3">
-          <div className="hpanel hgreen">
-            {/* <div className="panel-heading hbuilt border-0 title-grade-list text-uppercase  pl-8">Danh sách chương trình</div> */}
+          <div className="hpanel hgreen slide-backgroud">
             <div className="card card-custom card-stretch">
-              <div className="card-body px-3">
+              <div className="card-body py-0">
                 <div className="navi navi-hover navi-active navi-link-rounded navi-bold navi-icon-center navi-light-ico">
                   <div className="navi-item my-2">
                     <a className="navi-link active pl-0">
-                      <span className="navi-icon mr-2">
+                      <span className="navi-icon mr-2 text-left">
                         <i className="fa fa-book" aria-hidden="true"></i>
                       </span>
                       <span className="navi-text font-weight-bolder font-size-lg">
@@ -370,10 +369,6 @@ function TeachingList(props) {
       </div>
     </div>
   );
-}
-
-{
-  /* // TeachingList.propTypes = {}; */
 }
 
 export default TeachingList;

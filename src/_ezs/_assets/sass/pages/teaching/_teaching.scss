@@ -73,12 +73,11 @@ a {
     opacity: 1 !important;
 }
 
-.navi-item {
-    a.navi-link {
-        span {
-            // overflow: hidden;
-            // white-space: nowrap;
-            // text-overflow: ellipsis;
-        }
+.slide-backgroud {
+    height: 100%;
+}
+.card-custom.card-stretch {
+    .card-body {
+        padding: 0 20px !important;
     }
 }
