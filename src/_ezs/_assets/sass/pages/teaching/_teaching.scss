@@ -4,13 +4,14 @@ a {
 }
 
 .lesson-list__item:hover .lesson-list__btn {
-    transform: translateY(0%);
-    visibility: visible;
-  }
+    transform: translateY(0px) !important;
+    visibility: visible !important;
+}
 
  .title-grade-list {
     border-bottom: 2px solid #62cb31 !important;
  } 
+
 .lesson-list__item {
     margin-bottom: 20px;
     cursor: pointer;
@@ -40,7 +41,7 @@ a {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 0 20px;
+            padding: 0 38px;
             transform: translateY(100%);
             transition: all 0.3s ease;
             visibility: hidden;
@@ -49,7 +50,7 @@ a {
                 border: 1px solid white;
                 background: transparent;
                 color: #fff;
-                padding: 12px 0;
+                padding: 5px 0;
                 border-radius: 35px;
                 font-size: 14px;
                 font-weight: 700;
@@ -70,4 +71,14 @@ a {
 }
 .fade.tab-pane.active.show{
     opacity: 1 !important;
+}
+
+.navi-item {
+    a.navi-link {
+        span {
+            // overflow: hidden;
+            // white-space: nowrap;
+            // text-overflow: ellipsis;
+        }
+    }
 }

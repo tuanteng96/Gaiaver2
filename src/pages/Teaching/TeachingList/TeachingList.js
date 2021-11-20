@@ -6,6 +6,7 @@ import "../../../_ezs/_assets/sass/style.react.scss";
 import { isDev } from "../../../_ezs/_helpers/AssetsHelpers";
 import { toAbsoluteUrl } from "../../../_ezs/_helpers/AssetsHelpers";
 
+
 const fechData = [
   {
     Id: 1,
@@ -23,6 +24,36 @@ const fechData = [
       },
       {
         Title: "K1_Tự làm việc của mình_Tiết 3_Onl",
+        Image:
+          "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
+      },
+      {
+        Title: "K1_Tự làm việc của mình_Tiết 4_Onl",
+        Image:
+          "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
+      },
+      {
+        Title: "K1_Tự làm việc của mình_Tiết 4_Onl",
+        Image:
+          "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
+      },
+      {
+        Title: "Khung Trường Tiểu Học chuẩn tháng 9 Online",
+        Image:
+          "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
+      },
+      {
+        Title: "K1_Tự làm việc của mình_Tiết 4_Onl",
+        Image:
+          "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
+      },
+      {
+        Title: "K1_Tự làm việc của mình_Tiết 4_Onl",
+        Image:
+          "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
+      },
+      {
+        Title: "Khung Trường Tiểu Học chuẩn tháng 9 Online",
         Image:
           "https://dayhoc.hoccunggaia.edu.vn/Upload/thumbnails/Hinh%20tieu%20de%20bai%20hoc_Tiet%201.jpg.png",
       },
@@ -250,24 +281,24 @@ function TeachingList(props) {
       <div className="hpanel">
         <div className="panel-body">
           <div className="d-flex">
-            <h2 className="font-light m-b-xs tb-head-title">Quản lý Dạy học</h2>
+            <h2 className="font-light m-b-xs tb-head-title text-uppercase ">Quản lý Dạy học</h2>
           </div>
         </div>
       </div>
       <div className="row">
         <div className="col-md-3">
           <div className="hpanel hgreen">
-            <div className="panel-heading hbuilt border-0 title-grade-list">Danh sách chương trình</div>
+            {/* <div className="panel-heading hbuilt border-0 title-grade-list text-uppercase  pl-8">Danh sách chương trình</div> */}
             <div className="card card-custom card-stretch">
-              <div className="card-body px-5">
-                <div className="navi navi-hover navi-active navi-link-rounded navi-bold navi-icon-center navi-light-icon px-5">
+              <div className="card-body px-3">
+                <div className="navi navi-hover navi-active navi-link-rounded navi-bold navi-icon-center navi-light-ico">
                   <div className="navi-item my-2">
-                    <a className="navi-link active">
-                      <span className="navi-icon mr-4">
+                    <a className="navi-link active pl-0">
+                      <span className="navi-icon mr-2">
                         <i className="fa fa-book" aria-hidden="true"></i>
                       </span>
                       <span className="navi-text font-weight-bolder font-size-lg">
-                        Khung Trường Tiểu Học Onl
+                        Khung Trường Tiểu Học chuẩn tháng 9 Online
                       </span>
                     </a>
                   </div>
@@ -279,9 +310,9 @@ function TeachingList(props) {
         <div className="col-md-9">
           <Tab.Container activeKey={`key-${keyTab}`}>
             <div className="card card-custom gutter-b">
-              <div className="card-body px-5">
+              <div className="card-body px-3 py-0 pl-9">
                 <div className="d-flex align-items-center mr-2 py-2">
-                  <h3 className="font-weight-boild mr-10">Chọn khối</h3>
+                  <h3 className="font-weight-boild mr-10 mb-0">Chọn khối</h3>
                   <div className="d-flex mr-3">
                       <Nav
                         onSelect={(selectedKey) => {
@@ -323,7 +354,7 @@ function TeachingList(props) {
                                       <button className="lesson-btn" type="button">Xem giáo án</button>
                                     </div>
                                   </div>
-                                  <div className="title pt-6">{a.Title}</div>
+                                  <div className="title pt-4">{a.Title}</div>
                                 </div>
                               </div>
                             );
