@@ -25,13 +25,15 @@ function TeachingPage(props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      checkMechine();
+      // checkMechine();
     }, delay * 60 * 1000);
 
     return () => clearInterval(interval); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    setListTeaching([0])
+    return false;
     if (Token && MachineUser) {
       loginMechine();
     } else {
