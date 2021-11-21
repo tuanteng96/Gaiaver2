@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import FingerprintJS from "@fingerprintjs/fingerprintjs-pro";
-import { setMachine } from "./_redux/teachingSlice";
+import { setMachine } from "../Auth/_redux/authSlice";
 import TeachingCrud from "./_redux/teachingCrud";
 import TeachingList from "./TeachingList/TeachingList";
 import "../../_ezs/_assets/sass/pages/teaching/_teaching.scss";
@@ -15,25 +15,24 @@ const fpPromise = FingerprintJS.load({
 
 function TeachingPage(props) {
   const [listTeaching, setListTeaching] = useState(null);
-  const { MachineCode, MachineUser, Token } = useSelector(({ teaching }) => ({
-    Token: teaching.Token, // lấy trong store.js
-    MachineCode: teaching.MachineCode,
-    MachineUser: teaching.MachineUser,
+  const { MachineCode, MachineUser, Token } = useSelector(({ auth }) => ({
+    Token: auth.Token, // lấy trong store.js
+    MachineCode: auth.MachineCode,
+    MachineUser: auth.MachineUser,
   }));
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // checkMechine();
+      checkMechine();
     }, delay * 60 * 1000);
 
     return () => clearInterval(interval); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    setListTeaching([0])
-    return false;
+    setListTeaching([0]);
     if (Token && MachineUser) {
       loginMechine();
     } else {
