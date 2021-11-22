@@ -22,7 +22,6 @@ function ModalMissionReport({
   defaultValue,
   isLoading,
 }) {
-  console.log(defaultValue);
   if (!defaultValue) return "";
   return (
     <Modal show={show} onHide={onHide} size="xl">

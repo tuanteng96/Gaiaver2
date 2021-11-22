@@ -3,35 +3,45 @@ import { isDev } from "../../_ezs/_helpers/AssetsHelpers";
 import BaseTablesCustom from "../../_shared/base-tables/BaseTablesCustom";
 import { getRequestParams } from "../../_ezs/_helpers/RequestHelpers";
 import ModalPoint from "./ModalPoint/ModalPoint";
+import PointsCrud from "./_redux/PointsCrud";
+import { sleep } from "../../_ezs/_helpers/DelayHelpers";
+import Swal from "sweetalert2";
 
 import moment from "moment";
 import "moment/locale/vi";
+import { useDispatch, useSelector } from "react-redux";
+import { setPermission } from "./_redux/pointsSlice";
+import PointsFiles from "./PointsFiles/PointsFiles";
 
 moment.locale("vi");
 // import PropTypes from 'prop-types';
 
 // PointsPage.propTypes = {
 
-// };
-const data = [
-  {
-    ID: 1,
-    TeacherName: "Nguyễn Tài Tuấn",
-    TeacherUSN: "GV005",
-    TaskName: "Nộp bài K7 Sử dụng internet thông minh tiết 1",
-    FilesJson: [
-      {
-        Title: "Video bài giảng",
-        Path: "https://google.com",
-      },
-      {
-        Title: "Giáo án",
-        Path: "https://google.com",
-      },
-    ],
-    DateFiling: "2021-11-21T12:44:11",
-  },
-];
+//};
+
+const showErrorPermiss = () => {
+  Swal.fire({
+    title: "Truy cập bị cấm",
+    html: `<div class="p-1">
+        <div class="mb-3">
+          Tài khoản của bạn đã đăng ký sử dụng chức năng Chấm điểm.
+        </div>
+      </div>`,
+    icon: "error",
+    showCancelButton: true,
+    showConfirmButton: false,
+    cancelButtonText: "Đóng",
+    buttonsStyling: false,
+    allowOutsideClick: false,
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
+    },
+  }).then(() => {
+    window.location.href = "/";
+  });
+};
 
 function PointsPage(props) {
   const [listPoin, setListPoin] = useState([]);
@@ -43,37 +53,59 @@ function PointsPage(props) {
   const [PageTotal, setPageTotal] = useState(0);
   const [isModal, setIsModal] = useState(false);
   const [defaultValue, setDefaultValue] = useState({});
+  const { Permission, R_Token } = useSelector((state) => state.point);
+
+  const dispatch = useDispatch();
 
   const retrievePoint = async () => {
     !loading && setLoading(true);
     const params = getRequestParams(filters);
-    console.log(params);
-    setTimeout(() => {
-      setPageTotal(1);
-      setListPoin(data);
-      setLoading(false);
-    }, 1000);
 
-    // MissionReportCrud.getListMissionRp(params)
-    //   .then((response) => {
-    //     if (response.error) {
-    //       console.log(response.error);
-    //     } else {
-    //       const { list, total } = response.data;
-    //       setPageTotal(total);
-    //       setListMission(list);
-    //     }
-    //     setLoading(false);
-    //   })
-    //   .catch(({ response }) => {
-    //     console.log(response);
-    //   });
+    try {
+      const { data, more } = await PointsCrud.getList(params, R_Token);
+      const { total, list } = data;
+      await sleep(500);
+      if (!more.co_ban && !more.nang_cao) {
+        dispatch(setPermission(null));
+        showErrorPermiss();
+      } else {
+        dispatch(setPermission(more));
+        setPageTotal(total);
+        setListPoin(list);
+      }
+      setLoading(false);
+    } catch ({ response }) {
+      dispatch(setPermission(null));
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     retrievePoint();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
+
+  useState(() => {
+    if (!Permission) {
+      showErrorPermiss();
+    }
+  }, [Permission]);
+
+  const onSubmitPoint1 = async (values) => {
+    try {
+      console.log(values);
+    } catch ({ response }) {
+      console.log(response);
+    }
+  };
+
+  const onSubmitPoint2 = (values) => {
+    try {
+      console.log(values);
+    } catch ({ response }) {
+      console.log(response);
+    }
+  };
 
   const openModal = (values) => {
     setIsModal(true);
@@ -101,12 +133,12 @@ function PointsPage(props) {
       attrs: { "data-title": "STT" },
     },
     {
-      dataField: "TeacherName",
+      dataField: "UserFullName",
       text: "Giáo viên",
       formatter: (cell, row) => (
         <>
-          <div>[{row.TeacherUSN}]</div>
-          <div className="font-weight-boldest">{row.TeacherName}</div>
+          <div>[{row.UserCode}]</div>
+          <div className="font-weight-boldest">{row.UserFullName}</div>
         </>
       ),
       headerStyle: () => {
@@ -115,42 +147,36 @@ function PointsPage(props) {
       attrs: { "data-title": "Giáo viên" },
     },
     {
-      dataField: "TaskName",
+      dataField: "Task",
       text: "Nhiệm vụ",
       headerStyle: () => {
         return { minWidth: "20%", fontWeight: "800" };
       },
+      formatter: (cell, row) =>
+        row.Task && row.Task.Title ? row.Task.Title : "Chưa có tên",
       attrs: { "data-title": "Nhiêm vụ" },
     },
     {
       dataField: "FilesJson",
       text: "Báo cáo",
-      formatter: (cell, row) => (
-        <>
-          {row.FilesJson.map((file, index) => (
-            <a
-              key={index}
-              href={file.Path}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="d-block text-dark my-1 text-hover-primary"
-            >
-              <i className="fal fa-link mr-2"></i>
-              <ins>{file.Title}</ins>
-            </a>
-          ))}
-        </>
-      ),
+      formatter: (cell, row) => {
+        return (
+          row.FilesJson &&
+          JSON.parse(row.FilesJson).map((file, index) => (
+            <PointsFiles file={file} key={index} />
+          ))
+        );
+      },
       headerStyle: () => {
         return { minWidth: "150px", fontWeight: "800" };
       },
       attrs: { "data-title": "Báo cáo" },
     },
     {
-      dataField: `DateFiling`,
+      dataField: `CreateDate`,
       text: "Ngày nộp",
       formatter: (cell, row) => (
-        <>{moment(row.DateFiling).format("HH:mm:ss DD/MM/YYYY")}</>
+        <>{moment(row.CreateDate).format("HH:mm:ss DD/MM/YYYY")}</>
       ),
       headerStyle: () => {
         return { minWidth: "150px", fontWeight: "800", maxWidth: "100%" };
@@ -215,6 +241,9 @@ function PointsPage(props) {
       setFilters({ ...filters, Pi: Pi });
     },
   };
+
+  if (!Permission) return "";
+
   return (
     <div className={`container-fluid ${!isDev() ? "p-0" : ""}`}>
       <div className="hpanel">
@@ -238,6 +267,8 @@ function PointsPage(props) {
         show={isModal}
         onHide={hideModal}
         defaultValue={defaultValue}
+        onSubmitPoint1={onSubmitPoint1}
+        onSubmitPoint2={onSubmitPoint2}
       />
     </div>
   );
