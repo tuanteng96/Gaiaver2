@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Nav } from "react-bootstrap";
 // import PropTypes from "prop-types";
-import "../../../_ezs/_assets/sass/style.react.scss";
 import { isDev } from "../../../_ezs/_helpers/AssetsHelpers";
 import { NavLink } from "react-router-dom";
+import ModalTeaching from "./ModalTeaching/ModalTeaching";
 
 const fechData = [
   {
@@ -270,10 +270,19 @@ const fechData = [
 
 function TeachingList(props) {
   const [keyTab, setKetTab] = useState("");
+  const [isModal, setIsModal] = useState(false);
 
   useEffect(() => {
     setKetTab(fechData[0].Id);
   }, []);
+
+  const onOpenModal = () => {
+    setIsModal(true);
+  };
+
+  const onHideModal = () => {
+    setIsModal(false);
+  };
 
   return (
     <div className={`container-fluid ${!isDev() ? "p-0" : ""}`}>
@@ -353,12 +362,14 @@ function TeachingList(props) {
                                       <button
                                         className="lesson-btn"
                                         type="button"
+                                        onClick={onOpenModal}
                                       >
                                         Mở bài giảng
                                       </button>
                                       <button
                                         className="lesson-btn"
                                         type="button"
+                                        onClick={onOpenModal}
                                       >
                                         Xem giáo án
                                       </button>
@@ -376,6 +387,8 @@ function TeachingList(props) {
                 ))}
             </Tab.Content>
           </Tab.Container>
+
+          <ModalTeaching show={isModal} onHide={onHideModal}/>
         </div>
       </div>
     </div>

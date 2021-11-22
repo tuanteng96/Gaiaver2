@@ -108,6 +108,18 @@
       overflow-x: hidden;
     }
   }
+  //Dialog
+  .modal-dialog {
+    &.modal-fullscreen {
+      width: 100vw;
+      max-width: none;
+      height: 100%;
+      margin: 0;
+      .modal-content {
+        height: 100%;
+      }
+    }
+  }
 }
 
 @for $i from 1 through 6 {
