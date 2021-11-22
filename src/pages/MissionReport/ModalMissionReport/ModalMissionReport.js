@@ -22,6 +22,7 @@ function ModalMissionReport({
   defaultValue,
   isLoading,
 }) {
+  console.log(defaultValue);
   if (!defaultValue) return "";
   return (
     <Modal show={show} onHide={onHide} size="xl">
@@ -43,7 +44,11 @@ function ModalMissionReport({
                     ""
                   )}
                 </h3>
-                <div className="text-capitalize font-size-md font-weight-boldest">
+                <div
+                  className={`text-capitalize font-size-md font-weight-bold ${
+                    moment().isAfter(defaultValue.DeadLine) ? "text-danger" : ""
+                  }`}
+                >
                   {defaultValue.DeadLine &&
                     moment(defaultValue.DeadLine).format("LLLL")}
                 </div>
@@ -56,44 +61,63 @@ function ModalMissionReport({
                   <h3 className="text-uppercase font-size-lg mb-5 font-weight-boldest mt-0">
                     Báo cáo đã nộp
                   </h3>
-                  <div>
-                    <i className="fal fa-user-graduate icon-lg"></i>
-                    <span className="text-gaia ml-2 font-size-md font-weight-boldest">
-                      GV015.PhanThanh ( Ngày nộp: 18/10/2021 15:30 )
-                    </span>
-                  </div>
-                  <div className="mt-2">
-                    Người soạn thảo phải đầu tư thời gian, chọn lọc các số liệu
-                    và sự kiện về các vấn đề thuộc chức năng nhiệm vụ chính yếu
-                    của tổ.
-                  </div>
-                  <div className="mt-5">
-                    <h4 className="font-size-base font-weight-boldest">
-                      <i className="fal fa-link mr-2"></i> File đính kèm
-                    </h4>
-                    <div className="bg-gray-100 mt-3 rounded d-flex justify-content-between overflow-hidden cursor-pointer align-items-stretch">
-                      <div className="p-3 flex-1 d-flex">
-                        <i className="fal fa-file-contract mr-3"></i>
-                        <div className="text-truncate max-w-75">
-                          gv015_thanh_sudunginternet_k7_tiet2.20211018.1.docx
-                        </div>
-                      </div>
-                      <div className="w-40px d-flex justify-content-center align-items-center font-size-lg bg-primary bg-primary">
-                        <i className="fal fa-cloud-download text-white"></i>
-                      </div>
-                    </div>
-                    <div className="bg-gray-100 mt-3 rounded d-flex justify-content-between align-items-stretch overflow-hidden cursor-pointer">
-                      <div className="p-3 flex-1 d-flex">
-                        <i className="fal fa-file-contract mr-3"></i>
-                        <div className="text-truncate max-w-75">
-                          gv015_thanh_sudunginternet_k7_tiet2.20211018.1.docx
-                        </div>
-                      </div>
-                      <div className="w-40px d-flex justify-content-center align-items-center font-size-lg bg-primary bg-primary">
-                        <i className="fal fa-cloud-download text-white"></i>
-                      </div>
-                    </div>
-                  </div>
+                  {defaultValue &&
+                  defaultValue.Reports &&
+                  defaultValue.Reports.length > 0 ? (
+                    <React.Fragment>
+                      {defaultValue.Reports.map(
+                        (item, index) =>
+                          index === 0 && (
+                            <React.Fragment key={index}>
+                              <div>
+                                <i className="fal fa-user-graduate icon-lg"></i>
+                                <span className="text-gaia ml-2 font-size-md font-weight-boldest">
+                                  <span className="text-uppercase">
+                                    [{item.UserCode}]
+                                  </span>
+                                  .{item.UserFullName} ( Ngày nộp:{" "}
+                                  {moment(item.CreateDate).format(
+                                    "HH:mm DD/MM/YYYY"
+                                  )}{" "}
+                                  )
+                                </span>
+                              </div>
+                              <div className="mt-2">{item.Desc}</div>
+                              <div className="mt-5">
+                                <h4 className="font-size-base font-weight-boldest">
+                                  <i className="fal fa-link mr-2"></i> File đính
+                                  kèm
+                                </h4>
+                                {item.FilesJson &&
+                                  JSON.parse(item.FilesJson).map(
+                                    (file, idx) => (
+                                      <a
+                                        key={idx}
+                                        href={file.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="bg-gray-100 mt-3 rounded d-flex justify-content-between overflow-hidden cursor-pointer align-items-stretch"
+                                      >
+                                        <div className="p-3 flex-1 d-flex">
+                                          <i className="fal fa-file-contract mr-3"></i>
+                                          <div className="text-truncate max-w-75 text-dark">
+                                            {file.link}
+                                          </div>
+                                        </div>
+                                        <div className="w-40px d-flex justify-content-center align-items-center font-size-lg bg-primary bg-primary">
+                                          <i className="fal fa-cloud-download text-white"></i>
+                                        </div>
+                                      </a>
+                                    )
+                                  )}
+                              </div>
+                            </React.Fragment>
+                          )
+                      )}
+                    </React.Fragment>
+                  ) : (
+                    <div>Chưa có báo cáo nộp</div>
+                  )}
                 </div>
               </div>
             </div>

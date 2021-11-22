@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isDev } from "../../_ezs/_helpers/AssetsHelpers";
 import { getRequestParams } from "../../_ezs/_helpers/RequestHelpers";
-import { sleep } from "../../_ezs/_helpers/DelayHelpers";
 import { toast } from "react-toastify";
 import MissionReportCrud from "./_redux/MissionReportCrud";
 import BaseTablesCustom from "../../_shared/base-tables/BaseTablesCustom";
@@ -65,19 +64,61 @@ function MissionReportPage(props) {
   };
 
   const onSubmitMisson = async (values, { resetForm }) => {
+    const newValue = {
+      ...values,
+      FilesJson:
+        values.FilesJson &&
+        values.FilesJson.filter((item) => item.link && item.link.length > 0),
+    };
     setIsLoading((prev) => ({ ...prev, MissonReport: true }));
     try {
-      await sleep(1000);
+      await MissionReportCrud.sendMissionRp(newValue);
+      await retrieveMission();
       setIsLoading((prev) => ({ ...prev, MissonReport: false }));
       toast.success("Gửi báo cáo thành công", {
         position: toast.POSITION.TOP_RIGHT,
-        autoClose: 1000,
+        autoClose: 3000,
       });
       resetForm();
-      console.log(values);
-    } catch (error) {
-      console.log(error);
+    } catch ({ response }) {
+      setIsLoading((prev) => ({ ...prev, MissonReport: false }));
+      toast.error(response.data && response.data.error, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
     }
+  };
+
+  const checkStatus = (task) => {
+    if (!task || (task && task.length === 0)) {
+      return (
+        <span className="label label-warning label-pill label-inline ml-2">
+          Chưa nộp
+        </span>
+      );
+    }
+    const isPoint =
+      task && task.some((item) => item.Point1List || item.Point2List);
+    if (isPoint) {
+      return (
+        <span className="label label-success label-pill label-inline ml-2">
+          Đã chấm
+        </span>
+      );
+    } else {
+      return (
+        <span className="label label-primary label-pill label-inline ml-2">
+          Đã nộp
+        </span>
+      );
+    }
+  };
+
+  const getPoint = (task) => {
+    const isPoint =
+      task && task.some((item) => item.Point1List || item.Point2List);
+    if (isPoint) return "100";
+    return "Chưa có";
   };
 
   const columns = [
@@ -104,12 +145,12 @@ function MissionReportPage(props) {
       attrs: { "data-title": "Tên" },
     },
     {
-      dataField: `To`,
+      dataField: `DeadLine`,
       text: "Hạn nộp",
       formatter: (cell, row) => (
         <>
-          {moment(row.To).format("HH:mm:ss DD/MM/YYYY")}
-          {moment().isAfter(row.To) ? (
+          {moment(row.DeadLine).format("HH:mm:ss DD/MM/YYYY")}
+          {moment().isAfter(row.DeadLine) ? (
             <span className="label label-light-danger label-pill label-inline ml-2">
               Hết hạn
             </span>
@@ -126,13 +167,7 @@ function MissionReportPage(props) {
     {
       dataField: `Status`,
       text: "Trạng thái",
-      formatter: (cell, row) => (
-        <>
-          <span className="label label-danger label-pill label-inline ml-2">
-            Chưa nộp
-          </span>
-        </>
-      ),
+      formatter: (cell, row) => checkStatus(row.Reports),
       headerAlign: "center",
       style: { textAlign: "center" },
       headerStyle: () => {
@@ -143,7 +178,7 @@ function MissionReportPage(props) {
     {
       dataField: `Poin`,
       text: "Điểm",
-      formatter: (cell, row) => <>90</>,
+      formatter: (cell, row) => getPoint(row.Reports),
       headerStyle: () => {
         return { width: "100px", fontWeight: "800" };
       },

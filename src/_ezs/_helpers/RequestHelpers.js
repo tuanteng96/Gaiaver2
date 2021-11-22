@@ -1,17 +1,17 @@
 export const getRequestParams = (filters) => {
-  let params = {};
+    let params = {};
 
-  if (filters.Key) {
-    params.Key = filters.Key;
-  }
+    if (filters.Key) {
+        params.Key = filters.Key;
+    }
 
-  if (filters.Pi) {
-    params.Pi = filters.Pi;
-  }
+    if (filters.Pi) {
+        params.pi = filters.Pi;
+    }
 
-  if (filters.Ps) {
-    params.Ps = filters.Ps;
-  }
+    if (filters.Ps) {
+        params.ps = filters.Ps;
+    }
 
-  return params;
+    return params;
 };

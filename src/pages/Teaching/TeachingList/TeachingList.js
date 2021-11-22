@@ -293,7 +293,7 @@ function TeachingList(props) {
               <div className="card-body py-0">
                 <div className="navi navi-hover navi-active navi-link-rounded navi-bold navi-icon-center navi-light-ico">
                   <div className="navi-item my-2">
-                    <NavLink className="navi-link active pl-0">
+                    <NavLink className="navi-link active pl-0" to="/">
                       <span className="navi-icon mr-2 text-left">
                         <i className="fa fa-book" aria-hidden="true"></i>
                       </span>
