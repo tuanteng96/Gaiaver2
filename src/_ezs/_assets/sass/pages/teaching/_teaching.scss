@@ -1,35 +1,24 @@
-a {
-    color: #6a6c6f;
-    font-size: 14px;
-}
-
 .lesson-list__item:hover .lesson-list__btn {
     transform: translateY(0px) !important;
     visibility: visible !important;
 }
 
- .title-grade-list {
+.title-grade-list {
     border-bottom: 2px solid #62cb31 !important;
- } 
+}
 
 .lesson-list__item {
     margin-bottom: 20px;
     cursor: pointer;
-    
-
     .image {
         overflow: hidden;
         position: relative;
-
         img {
             width: 100%;
             height: auto;
             border-radius: 8px;
             object-fit: cover;
-           
-
         }
-
         .lesson-list__btn {
             border-radius: 8px;
             position: absolute;
@@ -45,37 +34,35 @@ a {
             transform: translateY(100%);
             transition: all 0.3s ease;
             visibility: hidden;
-
             .lesson-btn {
                 border: 1px solid white;
                 background: transparent;
                 color: #fff;
-                padding: 5px 0;
+                padding: 11px 0 10px;
                 border-radius: 35px;
                 font-size: 14px;
                 font-weight: 700;
                 outline: none;
                 transition: all 0.3s ease;
-
                 &:first-child {
                     margin-bottom: 10px;
                 }
-
                 &:hover {
                     background: rgba(255, 255, 255, 0.5);
                 }
             }
         }
     }
-
 }
-.fade.tab-pane.active.show{
+
+.fade.tab-pane.active.show {
     opacity: 1 !important;
 }
 
 .slide-backgroud {
     height: 100%;
 }
+
 .card-custom.card-stretch {
     .card-body {
         padding: 0 20px !important;
