@@ -32,7 +32,8 @@ function TeachingPage(props) {
   }, []);
 
   useEffect(() => {
-    setListTeaching([0]);
+    // setListTeaching([0]);
+    // return false;
     if (Token && MachineUser) {
       loginMechine();
     } else {
