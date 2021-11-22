@@ -1,0 +1,220 @@
+.filter-statistic {
+    padding-top: 15px;
+
+    ul {
+        list-style: none;
+        display: flex;
+        padding-left: 0;
+        flex-wrap: wrap;
+
+        li {
+            margin-right: 10px;
+            width: 150px;
+
+            &:last-child {
+                margin-right: 0;
+
+            }
+
+            a {
+                &>div {
+                    position: relative;
+
+                    i {
+                        position: absolute;
+                        top: 15px;
+                        right: 9px;
+                        font-size: 1rem;
+                        color: #CCCCCC;
+                    }
+                    input {
+                        width: 100%;
+                    }
+
+                }
+            }
+        }
+
+        li.filter-statistic-search {
+            width: 100px;
+            .quicksearch {
+                position: relative;
+
+                i {
+                    position: absolute;
+                    top: 12px;
+                    left: 9px;
+                    font-size: 1rem;
+                    color: white;
+                    margin-right: 5px;
+                }
+
+                button {
+                    padding-left: 25px;
+                }
+            }
+        }
+
+        li.filter-statistic-export {
+            width: 100px;
+            .export-excel {
+                position: relative;
+
+                i {
+                    position: absolute;
+                    top: 12px;
+                    left: 9px;
+                    font-size: 1rem;
+                    color: white;
+                    margin-right: 5px;
+                }
+
+                button {
+                    padding-left: 25px;
+                }
+            }
+
+        }
+    }
+}
+
+// backgroud: trắng " không được giao"
+.not-delivered {
+    background: white;
+}
+
+// được giao chưa nộp
+.unpaid-delivered {
+    background: #f77984;
+    color: white;
+}
+
+// đã nộp
+.sub-delivered {
+    background: #69f0d3;
+    color: white;
+}
+
+// đã chấm
+.dotted-delivered {
+    background: #5cacfc;
+    color: white;
+
+}
+
+.note-table {
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    ul {
+        display: inline-flex;
+        list-style: none;
+        padding-left: 0;
+
+        .not-delivered-icon {
+            padding-right: 10px;
+
+            i {
+                color: rgb(219, 214, 214);
+            }
+        }
+
+        .unpaid-delivered-icon {
+            @extend .not-delivered-icon;
+
+            i {
+                color: #f77984;
+            }
+        }
+
+        .sub-delivered-icon {
+            @extend .not-delivered-icon;
+
+            i {
+                color: #69f0d3;
+            }
+        }
+
+        .dotted-delivered-icon {
+
+            i {
+                color: #5cacfc;
+            }
+        }
+    }
+
+    ul {
+        li {
+
+            .note-text {
+                font-weight: 800;
+                font-size: 13px;
+                line-height: 19px;
+                color: #6a6c6f;
+
+                span {
+                    font-weight: 400;
+                }
+            }
+
+            &:first-child {
+                padding-right: 10px;
+            }
+        }
+    }
+}
+
+
+// custom scroll
+.scroll-custom--auto {
+    &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: #ddd;
+    }
+
+    &::-webkit-scrollbar-track {
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+
+    &::-webkit-scrollbar {
+        width: 12px;
+        background-color: #dddddd;
+        height: 5px;
+        border-radius: 10px;
+    }
+
+
+}
+.head-table-mission {
+    background: #FFE2E5;
+}
+input[type="text"] {
+    height: 34px !important;
+    padding: 6px 12px !important;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+.form-control {
+    @extend input[type="text"];
+}
+.filter-statistic-groupMission {
+    input {
+        border: 1px solid #ccc !important;
+        &::placeholder{
+            color: #959595 !important;
+        }
+    }
+    
+}
+.filter-statistic-mission {
+    @extend .filter-statistic-groupMission ;
+}
