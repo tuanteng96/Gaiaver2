@@ -12,11 +12,11 @@ function PointsFiles({ file }) {
 
   return (
     <div
-      className="d-block text-dark my-1 text-hover-primary cursor-pointer"
+      className="d-flex text-dark my-1 text-hover-primary cursor-pointer"
       onClick={() => handleClick(file.link)}
     >
       <i className="fal fa-link mr-2"></i>
-      <ins>{file.link}</ins>
+      <ins className="text-truncate max-w-400px d-block">{file.link}</ins>
     </div>
   );
 }

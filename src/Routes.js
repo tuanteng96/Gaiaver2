@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from "react";
 import { Switch, Route } from "react-router-dom";
 const TeachingPage = lazy(() => import("./pages/Teaching/TeachingPage"));
 const MissionPage = lazy(() => import("./pages/Mission/MissionPage"));
-const Statistical = lazy(() => import("./pages/Statistical/Statistical"));
+// const Statistical = lazy(() => import("./pages/Statistical/Statistical"));
 const MissionReportPage = lazy(() =>
   import("./pages/MissionReport/MissionReportPage")
 );
@@ -24,7 +24,7 @@ function Routes(props) {
           component={MissionReportPage}
         />
         <Route path={`${path}/cham-diem`} component={PointsPage} />
-        <Route path={`${path}/thong-ke`} component={Statistical} />
+        {/* <Route path={`${path}/thong-ke`} component={Statistical} /> */}
       </Switch>
     </Suspense>
   );

@@ -6,12 +6,14 @@ import ModalPoint from "./ModalPoint/ModalPoint";
 import PointsCrud from "./_redux/PointsCrud";
 import { sleep } from "../../_ezs/_helpers/DelayHelpers";
 import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+
+import { useDispatch, useSelector } from "react-redux";
+import { setLoadingBtn, setPermission } from "./_redux/pointsSlice";
 
 import moment from "moment";
 import "moment/locale/vi";
-import { useDispatch, useSelector } from "react-redux";
-import { setPermission } from "./_redux/pointsSlice";
-import PointsFiles from "./PointsFiles/PointsFiles";
+import PointsListFiles from "./PointsFiles/PointsListFiles/PointsListFiles";
 
 moment.locale("vi");
 // import PropTypes from 'prop-types';
@@ -25,7 +27,7 @@ const showErrorPermiss = () => {
     title: "Truy cập bị cấm",
     html: `<div class="p-1">
         <div class="mb-3">
-          Tài khoản của bạn đã đăng ký sử dụng chức năng Chấm điểm.
+          Bạn không có quyền truy cập chức năng Chấm điểm.
         </div>
       </div>`,
     icon: "error",
@@ -66,16 +68,15 @@ function PointsPage(props) {
       const { total, list } = data;
       await sleep(500);
       if (!more.co_ban && !more.nang_cao) {
-        dispatch(setPermission(null));
-        showErrorPermiss();
+        await dispatch(setPermission(null));
       } else {
-        dispatch(setPermission(more));
+        await dispatch(setPermission(more));
         setPageTotal(total);
         setListPoin(list);
       }
       setLoading(false);
     } catch ({ response }) {
-      dispatch(setPermission(null));
+      await dispatch(setPermission(null));
       setLoading(false);
     }
   };
@@ -85,25 +86,153 @@ function PointsPage(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
-  useState(() => {
-    if (!Permission) {
+  useEffect(() => {
+    if (Permission === null) {
       showErrorPermiss();
     }
   }, [Permission]);
 
-  const onSubmitPoint1 = async (values) => {
+  useEffect(() => {
+    if (
+      defaultValue &&
+      Object.keys(defaultValue).length !== 0 &&
+      Object.getPrototypeOf(defaultValue) === Object.prototype
+    ) {
+      const index = listPoin.findIndex((item) => item.ID === defaultValue.ID);
+      index > -1 && setDefaultValue(listPoin[index]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listPoin]);
+
+  const onSubmitPoint1 = async (values, { resetForm }) => {
+    dispatch(setLoadingBtn({ Point1: true }));
     try {
-      console.log(values);
+      await PointsCrud.SendPoint1(values);
+      await sleep(500);
+      await retrievePoint();
+      dispatch(setLoadingBtn({ Point1: false }));
+      toast.success("Chấm điểm thành công", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+      resetForm();
     } catch ({ response }) {
-      console.log(response);
+      dispatch(setLoadingBtn({ Point1: false }));
+      toast.error(response.data && response.data.error, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
     }
   };
 
-  const onSubmitPoint2 = (values) => {
+  const onSubmitPoint2 = async (values, { resetForm }) => {
+    dispatch(setLoadingBtn({ Point2: true }));
     try {
-      console.log(values);
+      await PointsCrud.SendPoint2(values);
+      await sleep(500);
+      await retrievePoint();
+      dispatch(setLoadingBtn({ Point2: false }));
+      toast.success("Chấm điểm thành công", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+      resetForm();
     } catch ({ response }) {
-      console.log(response);
+      dispatch(setLoadingBtn({ Point2: false }));
+      toast.error(response.data && response.data.error, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const onSubmitComment = async (values, { resetForm }) => {
+    dispatch(setLoadingBtn({ Comment: true }));
+    try {
+      await PointsCrud.SendComment(values);
+      await sleep(500);
+      await retrievePoint();
+      dispatch(setLoadingBtn({ Comment: false }));
+      toast.success("Gửi phản hồi thành công.", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+      resetForm();
+    } catch ({ response }) {
+      dispatch(setLoadingBtn({ Comment: false }));
+      toast.error(response.data && response.data.error, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const PointChecked = async (item, type, ID, arr) => {
+    const idx1 =
+      arr &&
+      arr.Point1List &&
+      arr.Point1List.findIndex((sub) => sub.Status === "done");
+    const idx2 =
+      arr &&
+      arr.Point2List &&
+      arr.Point2List.findIndex((sub) => sub.Status === "done");
+    const newData = {
+      ID: ID,
+      Status: "done",
+      Index1: 0,
+      Index2: 0,
+    };
+    const dataRemove = {
+      ...newData,
+      Status: "",
+    };
+    const aciton = {
+      Index: item.Index,
+    };
+
+    if (type === "Point1") {
+      newData.Index1 = item.Index;
+      aciton.Point = 1;
+    }
+    if (type === "Point2") {
+      newData.Index2 = item.Index;
+      aciton.Point = 2;
+    }
+
+    dispatch(setLoadingBtn({ Checked: aciton }));
+    try {
+      if ((idx1 !== null && idx1 > -1) || (idx2 !== null && idx2 > -1)) {
+        if (idx1 !== null && idx1 > -1) {
+          dataRemove.Index1 = arr.Point1List[idx1].Index || 0;
+        }
+        if (idx2 !== null && idx2 > -1) {
+          dataRemove.Index2 = arr.Point2List[idx2].Index || 0;
+        }
+        await PointsCrud.Checked(dataRemove);
+      }
+
+      if (item.Status === "") {
+        await PointsCrud.Checked(newData);
+      }
+      await sleep(500);
+      await retrievePoint();
+      dispatch(setLoadingBtn({ Checked: false }));
+
+      toast.success(
+        item.Status !== "done"
+          ? "Duyệt chấm điểm thành công."
+          : "Hủy duyệt bài chấm thành công.",
+        {
+          position: toast.POSITION.TOP_RIGHT,
+          autoClose: 3000,
+        }
+      );
+    } catch ({ response }) {
+      dispatch(setLoadingBtn({ Checked: false }));
+      toast.error(response?.data && response.data.error, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
     }
   };
 
@@ -115,6 +244,39 @@ function PointsPage(props) {
   const hideModal = () => {
     setIsModal(false);
     setDefaultValue({});
+  };
+
+  const renderStatus = (item) => {
+    const isDone1 =
+      item.Point1List && item.Point1List.some((item) => item.Status === "done");
+    const isDone2 =
+      item.Point2List && item.Point2List.some((item) => item.Status === "done");
+    if (isDone1 || isDone2) {
+      return (
+        <span className="label label-primary label-pill label-inline ml-2">
+          Đã chấm
+        </span>
+      );
+    }
+    if (item.Point1List && !item.Point2List) {
+      return (
+        <span className="label label-success label-pill label-inline ml-2">
+          Chấm lần 1
+        </span>
+      );
+    }
+    if (item.Point2List) {
+      return (
+        <span className="label label-success label-pill label-inline ml-2">
+          Chấm lần 2
+        </span>
+      );
+    }
+    return (
+      <span className="label label-warning label-pill label-inline ml-2">
+        Chưa chấm
+      </span>
+    );
   };
 
   const columns = [
@@ -150,7 +312,7 @@ function PointsPage(props) {
       dataField: "Task",
       text: "Nhiệm vụ",
       headerStyle: () => {
-        return { minWidth: "20%", fontWeight: "800" };
+        return { minWidth: "300px", fontWeight: "800" };
       },
       formatter: (cell, row) =>
         row.Task && row.Task.Title ? row.Task.Title : "Chưa có tên",
@@ -161,14 +323,13 @@ function PointsPage(props) {
       text: "Báo cáo",
       formatter: (cell, row) => {
         return (
-          row.FilesJson &&
-          JSON.parse(row.FilesJson).map((file, index) => (
-            <PointsFiles file={file} key={index} />
-          ))
+          <PointsListFiles
+            FilesJson={row.FilesJson && JSON.parse(row.FilesJson)}
+          />
         );
       },
       headerStyle: () => {
-        return { minWidth: "150px", fontWeight: "800" };
+        return { minWidth: "150px", fontWeight: "800", maxWidth: "400px" };
       },
       attrs: { "data-title": "Báo cáo" },
     },
@@ -186,13 +347,7 @@ function PointsPage(props) {
     {
       dataField: `Status`,
       text: "Trạng thái",
-      formatter: (cell, row) => (
-        <>
-          <span className="label label-danger label-pill label-inline ml-2">
-            Chấm lần 1
-          </span>
-        </>
-      ),
+      formatter: (cell, row) => renderStatus(row),
       headerAlign: "center",
       style: { textAlign: "center" },
       headerStyle: () => {
@@ -269,6 +424,8 @@ function PointsPage(props) {
         defaultValue={defaultValue}
         onSubmitPoint1={onSubmitPoint1}
         onSubmitPoint2={onSubmitPoint2}
+        onSubmitComment={onSubmitComment}
+        PointChecked={PointChecked}
       />
     </div>
   );

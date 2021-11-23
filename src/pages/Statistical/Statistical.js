@@ -1,35 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input } from "react-bootstrap";
+import React from "react";
 import { isDev } from "../../_ezs/_helpers/AssetsHelpers";
 import "../../_ezs/_assets/sass/pages/Statistical/_Statistical.scss";
-
-const data = [
-  {
-    ID: "GV001",
-    TeacherJson :[
-        {
-            TeacherName: "Nguyễn Văn A",
-            TotalScore :"TĐ",
-            Medium :"TB",
-        },
-    ],
-    TaskName: "Nộp bài K7 Sử dụng internet thông minh tiết 1",
-    TaskJson: [
-        {
-            quantity: "100",
-            submitted: "50",
-            point:"50",
-
-        },
-      
-    ],
-  },
-];
 
 function Statistical(props) {
   return (
     <div className={`container-fluid ${!isDev() ? "p-0" : ""}`}>
-      <div className="hpanel">
+      {/* <div className="hpanel">
         <div className="panel-body">
           <div className="d-flex">
             <h2 className="font-light m-b-xs tb-head-title">Thống kê</h2>
@@ -307,7 +283,7 @@ function Statistical(props) {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
 import { useSelector } from "react-redux";
+import NumberFormat from "react-number-format";
 
 FormPoint2.propTypes = {
   onSubmit: PropTypes.func,
@@ -17,6 +18,7 @@ const initialValue = {
 
 function FormPoint2({ onSubmit, defaultValue }) {
   const [initialValues, setInitialValues] = useState({});
+  const { LoadingBtn } = useSelector((state) => state.point);
 
   const { AdvPremiss } = useSelector(({ point }) => ({
     AdvPremiss: point.Permission && point.Permission.nang_cao,
@@ -41,23 +43,41 @@ function FormPoint2({ onSubmit, defaultValue }) {
       enableReinitialize={true}
     >
       {(formikProps) => {
-        const { values, touched, errors, handleChange, handleBlur } =
-          formikProps;
+        const {
+          values,
+          touched,
+          errors,
+          handleChange,
+          handleBlur,
+          setFieldValue,
+        } = formikProps;
         return (
           <Form>
             <div className="mb-8">
               <div className="form-group mb-0">
-                <input
-                  type="text"
-                  placeholder="Nhập điểm"
+                <NumberFormat
+                  allowNegative={false}
+                  name="Point2"
+                  placeholder={"Nhập Điểm"}
                   className={`form-control ${
                     errors.Point2 && touched.Point2
                       ? "is-invalid solid-invalid"
                       : ""
                   }`}
-                  name="Point2"
+                  isAllowed={(inputObj) => {
+                    const { value } = inputObj;
+                    if (value <= 100) return true;
+                    return false;
+                  }}
+                  isNumericString={true}
                   value={values.Point2}
-                  onChange={handleChange}
+                  onValueChange={(val) => {
+                    setFieldValue(
+                      "Point2",
+                      val.floatValue ? val.floatValue : val.value,
+                      false
+                    );
+                  }}
                   onBlur={handleBlur}
                   autoComplete="off"
                 />
@@ -76,14 +96,13 @@ function FormPoint2({ onSubmit, defaultValue }) {
                 />
               </div>
               <button
-                className={`btn btn-gaia font-weight-boldest ${
+                className={`btn btn-gaia font-weight-boldest w-auto ${
                   !AdvPremiss ? "disabled" : ""
+                } ${
+                  LoadingBtn.Point2
+                    ? "spinner spinner-white spinner-right pl-6 disabled"
+                    : "px-6"
                 }`}
-                // className={`btn btn-gaia font-size-lg py-3 w-auto ${
-                //   isLoading
-                //     ? "spinner spinner-white spinner-right pl-6 disabled"
-                //     : "px-6"
-                // }`}
                 type="submit"
               >
                 Chấm điểm

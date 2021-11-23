@@ -53,6 +53,20 @@ function MissionReportPage(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
+  useEffect(() => {
+    if (
+      defaultValue &&
+      Object.keys(defaultValue).length !== 0 &&
+      Object.getPrototypeOf(defaultValue) === Object.prototype
+    ) {
+      const index = listMission.findIndex(
+        (item) => item.ID === defaultValue.ID
+      );
+      index > -1 && setDefaultValue(listMission[index]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listMission]);
+
   const openModal = (values) => {
     setIsModal(true);
     setDefaultValue(values);
@@ -97,17 +111,20 @@ function MissionReportPage(props) {
         </span>
       );
     }
-    const isPoint =
-      task && task.some((item) => item.Point1List || item.Point2List);
-    if (isPoint) {
+    const idx1 =
+      task && task[0]?.Point1List?.findIndex((item) => item.Status === "done");
+    const idx2 =
+      task && task[0]?.Point2List?.findIndex((item) => item.Status === "done");
+
+    if ((idx1 !== null && idx1 > -1) || (idx2 !== null && idx2 > -1)) {
       return (
-        <span className="label label-success label-pill label-inline ml-2">
+        <span className="label label-primary label-pill label-inline ml-2">
           Đã chấm
         </span>
       );
     } else {
       return (
-        <span className="label label-primary label-pill label-inline ml-2">
+        <span className="label label-success label-pill label-inline ml-2">
           Đã nộp
         </span>
       );
@@ -115,9 +132,18 @@ function MissionReportPage(props) {
   };
 
   const getPoint = (task) => {
-    const isPoint =
-      task && task.some((item) => item.Point1List || item.Point2List);
-    if (isPoint) return "100";
+    const idx1 =
+      task && task[0]?.Point1List?.findIndex((item) => item.Status === "done");
+    const idx2 =
+      task && task[0]?.Point2List?.findIndex((item) => item.Status === "done");
+    if ((idx1 !== null && idx1 > -1) || (idx2 !== null && idx2 > -1)) {
+      return (
+        <span className="font-weight-bolder text-danger font-size-lg">
+          {(idx2 !== null && idx2 > -1 && task[0].Point2List[idx2].Point) ||
+            (idx1 !== null && idx1 > -1 && task[0].Point1List[idx1].Point)}
+        </span>
+      );
+    }
     return "Chưa có";
   };
 

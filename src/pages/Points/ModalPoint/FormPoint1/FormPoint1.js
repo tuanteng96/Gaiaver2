@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import * as Yup from "yup";
 import { Form, Formik } from "formik";
+import { useSelector } from "react-redux";
+import NumberFormat from "react-number-format";
 
 FormPoint1.propTypes = {
   onSubmit: PropTypes.func,
@@ -16,6 +18,7 @@ const initialValue = {
 
 function FormPoint1({ onSubmit, defaultValue }) {
   const [initialValues, setInitialValues] = useState({});
+  const { LoadingBtn } = useSelector((state) => state.point);
 
   useEffect(() => {
     setInitialValues(() => ({
@@ -36,23 +39,41 @@ function FormPoint1({ onSubmit, defaultValue }) {
       enableReinitialize={true}
     >
       {(formikProps) => {
-        const { values, touched, errors, handleChange, handleBlur } =
-          formikProps;
+        const {
+          values,
+          touched,
+          errors,
+          handleChange,
+          handleBlur,
+          setFieldValue,
+        } = formikProps;
         return (
           <Form>
             <div className="mb-8">
               <div className="form-group mb-0">
-                <input
-                  type="text"
-                  placeholder="Nhập điểm"
+                <NumberFormat
+                  allowNegative={false}
+                  name="Point1"
+                  placeholder={"Nhập Điểm"}
                   className={`form-control ${
                     errors.Point1 && touched.Point1
                       ? "is-invalid solid-invalid"
                       : ""
                   }`}
-                  name="Point1"
+                  isAllowed={(inputObj) => {
+                    const { value } = inputObj;
+                    if (value <= 100) return true;
+                    return false;
+                  }}
+                  isNumericString={true}
                   value={values.Point1}
-                  onChange={handleChange}
+                  onValueChange={(val) => {
+                    setFieldValue(
+                      "Point1",
+                      val.floatValue ? val.floatValue : val.value,
+                      false
+                    );
+                  }}
                   onBlur={handleBlur}
                   autoComplete="off"
                 />
@@ -71,12 +92,11 @@ function FormPoint1({ onSubmit, defaultValue }) {
                 />
               </div>
               <button
-                className="btn btn-gaia font-weight-boldest"
-                // className={`btn btn-gaia font-size-lg py-3 w-auto ${
-                //   isLoading
-                //     ? "spinner spinner-white spinner-right pl-6 disabled"
-                //     : "px-6"
-                // }`}
+                className={`btn btn-gaia font-weight-boldest w-auto ${
+                  LoadingBtn.Point1
+                    ? "spinner spinner-white spinner-right pl-6 disabled"
+                    : "px-6"
+                }`}
                 type="submit"
               >
                 Chấm điểm

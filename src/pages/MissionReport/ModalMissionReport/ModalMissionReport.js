@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Modal } from "react-bootstrap";
 import moment from "moment";
 import "moment/locale/vi";
 import FormMissionReport from "./FormMissionReport/FormMissionReport";
+import DOMPurify from "dompurify";
 
 moment.locale("vi");
 
@@ -22,6 +23,31 @@ function ModalMissionReport({
   defaultValue,
   isLoading,
 }) {
+  const [Points, setPoints] = useState(null);
+
+  useEffect(() => {
+    if (
+      defaultValue &&
+      defaultValue.Reports &&
+      defaultValue.Reports.length > 0
+    ) {
+      const task = defaultValue.Reports;
+      const idx1 = task[0]?.Point1List?.findIndex(
+        (item) => item.Status === "done"
+      );
+      const idx2 = task[0]?.Point2List?.findIndex(
+        (item) => item.Status === "done"
+      );
+      if ((idx1 !== null && idx1 > -1) || (idx2 !== null && idx2 > -1)) {
+        setPoints(
+          (idx2 !== null && idx2 > -1 && task[0].Point2List[idx2]) ||
+            (idx1 !== null && idx1 > -1 && task[0].Point1List[idx1])
+        );
+      }
+    } else {
+      setPoints(null);
+    }
+  }, [defaultValue]);
   if (!defaultValue) return "";
   return (
     <Modal show={show} onHide={onHide} size="xl">
@@ -51,11 +77,18 @@ function ModalMissionReport({
                   {defaultValue.DeadLine &&
                     moment(defaultValue.DeadLine).format("LLLL")}
                 </div>
-                <div className="mt-5 border-top py-5">
-                  {defaultValue.Desc
-                    ? defaultValue.Desc
-                    : "Chưa có nội dung nhiệm vụ"}
-                </div>
+                <div
+                  className="mt-5 border-top py-5"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      `${
+                        defaultValue.Desc
+                          ? defaultValue.Desc
+                          : "Chưa có nội dung nhiệm vụ"
+                      }`
+                    ),
+                  }}
+                />
                 <div className="border-top pt-5">
                   <h3 className="text-uppercase font-size-lg mb-5 font-weight-boldest mt-0">
                     Báo cáo đã nộp
@@ -125,12 +158,62 @@ function ModalMissionReport({
                 onSubmit={onSubmitMisson}
                 defaultValue={defaultValue}
                 isLoading={isLoading}
+                Points={Points}
               />
             </div>
           </div>
         </div>
       </Modal.Body>
-      {/* <Modal.Footer>a</Modal.Footer> */}
+      {Points && (
+        <Modal.Footer className="justify-content-start text-left">
+          <div className="row w-100">
+            <div className="col-md-2">
+              <h3 className="text-uppercase font-size-lg mb-5 font-weight-boldest mt-0">
+                Nhận xét
+              </h3>
+            </div>
+            <div className="col-md-7">
+              <div className="d-flex">
+                <div className="d-flex">
+                  <div className="text-dark-50 align-items-end">Ngày chấm</div>
+                  <abbr
+                    title={moment().format("HH:mm:ss DD/MM/YYYY")}
+                    className="font-size-md font-weight-bolder initialism pl-3"
+                  >
+                    {moment(Points.Date).format("HH:mm:ss DD/MM/YYYY")}
+                  </abbr>
+                </div>
+                <div className="ml-10 d-flex align-items-end">
+                  <div className="text-dark-50">Người chấm</div>
+                  <abbr
+                    title="Nguyễn Tài Tuấn"
+                    className="font-size-md font-weight-bolder initialism pl-3"
+                  >
+                    {Points.User && Points.User.FullName}
+                  </abbr>
+                </div>
+              </div>
+              <div
+                className="mt-4"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(Points.Desc),
+                }}
+              />
+            </div>
+            <div className="col-md-2 offset-md-1">
+              <div className="ribbon ribbon-clip ribbon-left h-130px border border-gaia rounded">
+                <div className="ribbon-target" style={{ top: "10px" }}>
+                  <span className="ribbon-inner bg-gaia" />
+                  Điểm
+                </div>
+                <div className="display-1 font-weight-boldest text-center mt-10 text-dark">
+                  {Points.Point}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Footer>
+      )}
     </Modal>
   );
 }

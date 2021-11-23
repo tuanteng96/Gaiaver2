@@ -47,7 +47,7 @@ const missionSchema = Yup.object().shape({
   FilesJson: Yup.array().checkEmpty("Trống").required(),
 });
 
-function FormMissionReport({ onSubmit, defaultValue, isLoading }) {
+function FormMissionReport({ onSubmit, defaultValue, isLoading, Points }) {
   const [initialValues, setInitialValues] = useState({});
 
   useEffect(() => {
@@ -171,7 +171,11 @@ function FormMissionReport({ onSubmit, defaultValue, isLoading }) {
                   isLoading
                     ? "spinner spinner-white spinner-right pl-6 disabled"
                     : "px-6"
-                } ${moment().isAfter(defaultValue.DeadLine) ? "disabled" : ""}`}
+                } ${
+                  moment().isAfter(defaultValue.DeadLine) || Points
+                    ? "disabled"
+                    : ""
+                }`}
                 type="submit"
               >
                 Gửi báo cáo

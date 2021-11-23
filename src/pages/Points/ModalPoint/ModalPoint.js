@@ -7,6 +7,7 @@ import moment from "moment";
 import "moment/locale/vi";
 import { useSelector } from "react-redux";
 import FormPoint2 from "./FormPoint2/FormPoint2";
+import FormComment from "./FormComment/FormComment";
 
 moment.locale("vi");
 
@@ -14,8 +15,10 @@ ModalPoint.propTypes = {
   show: PropTypes.bool,
   onHide: PropTypes.func,
   defaultValue: PropTypes.object,
-  onSubmitPoint1: PropTypes.object,
-  onSubmitPoint2: PropTypes.object,
+  onSubmitPoint1: PropTypes.func,
+  onSubmitPoint2: PropTypes.func,
+  onSubmitComment: PropTypes.func,
+  PointChecked: PropTypes.func,
 };
 
 function ModalPoint({
@@ -24,11 +27,14 @@ function ModalPoint({
   defaultValue,
   onSubmitPoint1,
   onSubmitPoint2,
+  onSubmitComment,
+  PointChecked,
 }) {
-  const { BasePermiss, AdvPremiss } = useSelector(({ point }) => ({
-    BasePermiss: point.Permission && point.Permission.co_ban, // lấy trong store.js
+  const { AdvPremiss, LoadingBtn } = useSelector(({ point }) => ({
     AdvPremiss: point.Permission && point.Permission.nang_cao,
+    LoadingBtn: point.LoadingBtn,
   }));
+
   if (!defaultValue) return "";
   return (
     <Modal show={show} onHide={onHide} size="xl">
@@ -57,31 +63,66 @@ function ModalPoint({
                 <div>
                   {defaultValue.Point1List &&
                   defaultValue.Point1List.length > 0 ? (
-                    <div className="bg-gray-100 p-4 rounded">
-                      <div className="mb-3 d-flex justify-content-between align-items-center">
-                        <div>
-                          <div className="text-dark-75 font-weight-boldest">
-                            Bùi Hồ Hoàng Kim
+                    <React.Fragment>
+                      {defaultValue.Point1List.map((item, index) => (
+                        <div
+                          className={`bg-gray-100 p-4 rounded ${
+                            defaultValue.Point1List.length - 1 !== index &&
+                            "mb-3"
+                          }`}
+                          key={index}
+                        >
+                          <div className="mb-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <div className="text-dark-75 font-weight-boldest">
+                                <span className="text-uppercase pr-1">
+                                  [{item.User && item.User.Code}]
+                                </span>
+                                {item.User && item.User.FullName}
+                              </div>
+                              <div className="text-muted">
+                                {moment(item.Date).format("HH:mm DD/MM/YYYY")}
+                              </div>
+                            </div>
+                            <div>
+                              <button className="btn btn-sm btn-outline-gaia btn-shadow font-weight-boldest font-size-md h-35px">
+                                {item.Point}
+                              </button>
+                              {AdvPremiss && (
+                                <button
+                                  className={`btn btn-sm font-weight-bold h-35px ml-2 ${
+                                    item.Status === "done"
+                                      ? "btn-primary"
+                                      : "btn-success"
+                                  }`}
+                                  onClick={() =>
+                                    PointChecked(
+                                      item,
+                                      "Point1",
+                                      defaultValue.ID,
+                                      defaultValue
+                                    )
+                                  }
+                                >
+                                  {LoadingBtn.Checked &&
+                                  LoadingBtn.Checked?.Point === 1 &&
+                                  LoadingBtn.Checked?.Index === item.Index ? (
+                                    <div className="spinner spinner-white w-20px"></div>
+                                  ) : (
+                                    <span>
+                                      {item.Status === "done"
+                                        ? "Đã duyệt"
+                                        : "Duyệt"}
+                                    </span>
+                                  )}
+                                </button>
+                              )}
+                            </div>
                           </div>
-                          <div className="text-muted">
-                            {moment().format("HH:mm DD/MM/YYYY")}
-                          </div>
+                          <div>{item.Desc}</div>
                         </div>
-                        <div>
-                          <button className="btn btn-sm btn-outline-gaia btn-shadow font-weight-boldest mr-2 font-size-md h-35px">
-                            50
-                          </button>
-                          <button className="btn btn-sm btn-success font-weight-boldest h-35px">
-                            Duyệt
-                          </button>
-                        </div>
-                      </div>
-                      <div>
-                        Ghi chép đầy đủ nội dung, có nhiều , góp ý, mở rộng.Duy
-                        trì được sự ổn định trong cách dạy.Có nhiều liên hệ, mở
-                        rộng, giải thích cho HS hiểu bài.
-                      </div>
-                    </div>
+                      ))}
+                    </React.Fragment>
                   ) : (
                     "Chưa chấm"
                   )}
@@ -101,33 +142,68 @@ function ModalPoint({
                   Lịch sử chấm lần 2
                 </h3>
                 <div>
-                  {defaultValue.Point1List &&
-                  defaultValue.Point1List.length > 0 ? (
-                    <div className="bg-gray-100 p-4 rounded">
-                      <div className="mb-3 d-flex justify-content-between align-items-center">
-                        <div>
-                          <div className="text-dark-75 font-weight-boldest">
-                            Bùi Hồ Hoàng Kim
+                  {defaultValue.Point2List &&
+                  defaultValue.Point2List.length > 0 ? (
+                    <React.Fragment>
+                      {defaultValue.Point2List.map((item, index) => (
+                        <div
+                          className={`bg-gray-100 p-4 rounded ${
+                            defaultValue.Point2List.length - 1 !== index &&
+                            "mb-3"
+                          }`}
+                          key={index}
+                        >
+                          <div className="mb-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <div className="text-dark-75 font-weight-boldest">
+                                <span className="text-uppercase pr-1">
+                                  [{item.User && item.User.Code}]
+                                </span>
+                                {item.User && item.User.FullName}
+                              </div>
+                              <div className="text-muted">
+                                {moment(item.Date).format("HH:mm DD/MM/YYYY")}
+                              </div>
+                            </div>
+                            <div>
+                              <button className="btn btn-sm btn-outline-gaia btn-shadow font-weight-boldest font-size-md h-35px">
+                                {item.Point}
+                              </button>
+                              {AdvPremiss && (
+                                <button
+                                  className={`btn btn-sm font-weight-bold h-35px ml-2 ${
+                                    item.Status === "done"
+                                      ? "btn-primary"
+                                      : "btn-success"
+                                  }`}
+                                  onClick={() =>
+                                    PointChecked(
+                                      item,
+                                      "Point2",
+                                      defaultValue.ID,
+                                      defaultValue
+                                    )
+                                  }
+                                >
+                                  {LoadingBtn.Checked &&
+                                  LoadingBtn.Checked?.Point === 2 &&
+                                  LoadingBtn.Checked?.Index === item.Index ? (
+                                    <div className="spinner spinner-white w-20px"></div>
+                                  ) : (
+                                    <span>
+                                      {item.Status === "done"
+                                        ? "Đã duyệt"
+                                        : "Duyệt"}
+                                    </span>
+                                  )}
+                                </button>
+                              )}
+                            </div>
                           </div>
-                          <div className="text-muted">
-                            {moment().format("HH:mm DD/MM/YYYY")}
-                          </div>
+                          <div>{item.Desc}</div>
                         </div>
-                        <div>
-                          <button className="btn btn-sm btn-outline-gaia btn-shadow font-weight-boldest mr-2 font-size-md h-35px">
-                            50
-                          </button>
-                          <button className="btn btn-sm btn-success font-weight-boldest h-35px">
-                            Duyệt
-                          </button>
-                        </div>
-                      </div>
-                      <div>
-                        Ghi chép đầy đủ nội dung, có nhiều , góp ý, mở rộng.Duy
-                        trì được sự ổn định trong cách dạy.Có nhiều liên hệ, mở
-                        rộng, giải thích cho HS hiểu bài.
-                      </div>
-                    </div>
+                      ))}
+                    </React.Fragment>
                   ) : (
                     "Chưa chấm"
                   )}
@@ -139,59 +215,42 @@ function ModalPoint({
                 <h3 className="font-size-md mb-5 font-weight-boldest mt-0 text-uppercase">
                   Phản hồi đến giáo viên
                 </h3>
-                <div className="mb-8">
-                  <div className="form-group mb-5">
-                    <textarea
-                      type="text"
-                      className="form-control"
-                      placeholder="Nhập nội dung"
-                      rows={3}
-                      name="Desc"
-                    />
-                  </div>
-                  <button
-                    className="btn btn-gaia font-weight-boldest"
-                    // className={`btn btn-gaia font-size-lg py-3 w-auto ${
-                    //   isLoading
-                    //     ? "spinner spinner-white spinner-right pl-6 disabled"
-                    //     : "px-6"
-                    // }`}
-                    type="submit"
-                  >
-                    Chấm điểm
-                  </button>
-                </div>
+                <FormComment
+                  defaultValue={defaultValue}
+                  onSubmit={onSubmitComment}
+                />
                 <h3 className="font-size-md mb-5 font-weight-boldest mt-0 text-uppercase">
                   LỊCH SỬ PHẢN HỒI GIÁO VIÊN
                 </h3>
                 <div>
                   {defaultValue.CommentList &&
                   defaultValue.CommentList.length > 0 ? (
-                    <div className="bg-gray-100 p-4 rounded">
-                      <div className="mb-3 d-flex justify-content-between align-items-center">
-                        <div>
-                          <div className="text-dark-75 font-weight-boldest">
-                            Bùi Hồ Hoàng Kim
+                    <React.Fragment>
+                      {defaultValue.CommentList.map((item, index) => (
+                        <div
+                          className={`bg-gray-100 p-4 rounded ${
+                            defaultValue.CommentList.length - 1 !== index &&
+                            "mb-3"
+                          }`}
+                          key={index}
+                        >
+                          <div className="mb-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <div className="text-dark-75 font-weight-boldest">
+                                <span className="text-uppercase pr-1">
+                                  [{item.User && item.User.Code}]
+                                </span>
+                                {item.User && item.User.FullName}
+                              </div>
+                              <div className="text-muted">
+                                {moment(item.Date).format("HH:mm DD/MM/YYYY")}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-muted">
-                            {moment().format("HH:mm DD/MM/YYYY")}
-                          </div>
+                          <div>{item.Comment}</div>
                         </div>
-                        <div>
-                          <button className="btn btn-sm btn-outline-gaia btn-shadow font-weight-boldest mr-2 font-size-md h-35px">
-                            50
-                          </button>
-                          <button className="btn btn-sm btn-success font-weight-boldest h-35px">
-                            Duyệt
-                          </button>
-                        </div>
-                      </div>
-                      <div>
-                        Ghi chép đầy đủ nội dung, có nhiều , góp ý, mở rộng.Duy
-                        trì được sự ổn định trong cách dạy.Có nhiều liên hệ, mở
-                        rộng, giải thích cho HS hiểu bài.
-                      </div>
-                    </div>
+                      ))}
+                    </React.Fragment>
                   ) : (
                     "Chưa có phản hồi"
                   )}
