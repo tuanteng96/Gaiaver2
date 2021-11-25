@@ -12,7 +12,7 @@ FormComment.propTypes = {
 const initialValue = {
   ID: null,
   Comment: "",
-  Status: "",
+  Status: "user"
 };
 
 function FormComment({ onSubmit, defaultValue }) {
@@ -21,10 +21,12 @@ function FormComment({ onSubmit, defaultValue }) {
   const { LoadingBtn } = useSelector((state) => state.point);
 
   useEffect(() => {
-    setInitialValues(() => ({
-      ...initialValue,
-      ID: defaultValue.ID,
-    }));
+    if (defaultValue) {
+      setInitialValues(() => ({
+        ...initialValue,
+        ID: defaultValue.ID,
+      }));
+    }
   }, [defaultValue]);
 
   const CommentSchema = Yup.object().shape({
@@ -43,27 +45,24 @@ function FormComment({ onSubmit, defaultValue }) {
           formikProps;
         return (
           <Form>
-            <div className="mb-8">
-              <div className="form-group mb-5">
-                <textarea
-                  type="text"
-                  placeholder="Nhập nội dung"
-                  name="Comment"
-                  className={`form-control min-h-130px ${
-                    errors.Comment && touched.Comment
-                      ? "is-invalid solid-invalid"
-                      : ""
-                  }`}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.Comment}
-                />
-              </div>
+            <div className="form-group mb-3 d-flex align-items-end">
+              <textarea
+                name="Comment"
+                className={`form-control ${
+                  errors.Comment && touched.Comment
+                    ? "is-invalid solid-invalid"
+                    : ""
+                }`}
+                rows={1}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.Comment}
+              ></textarea>
               <button
-                className={`btn btn-gaia font-weight-boldest w-auto ${
+                className={`btn btn-primary min-w-150px ml-3 ${
                   LoadingBtn.Comment
-                    ? "spinner spinner-white spinner-right pl-6 disabled"
-                    : "px-6"
+                    ? "spinner spinner-white spinner-right disabled"
+                    : ""
                 }`}
                 type="submit"
               >

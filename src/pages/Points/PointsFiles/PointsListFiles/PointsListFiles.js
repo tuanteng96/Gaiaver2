@@ -12,7 +12,7 @@ function PointsListFiles({ FilesJson }) {
     return (
       <div>
         {FilesJson &&
-          FilesJson.map((file, index) => <PointsFiles file={file} />)}
+          FilesJson.map((file, index) => <PointsFiles file={file} key={index} />)}
         <div
           className="d-flex align-items-center my-1 text-primary cursor-pointer"
           onClick={() => setIsFull(!isFull)}
@@ -27,11 +27,11 @@ function PointsListFiles({ FilesJson }) {
     <div>
       {FilesJson &&
         FilesJson.filter((item, index) => index < 2).map((file, index) => (
-          <PointsFiles file={file} />
+          <PointsFiles file={file} key={index} />
         ))}
       {FilesJson && FilesJson.length > 2 && (
         <div
-          className="d-flex align-items-center my-1 text-primary cursor-pointer"
+          className="d-flex align-items-center align-items-center my-1 text-primary cursor-pointer"
           onClick={() => setIsFull(!isFull)}
         >
           <i className="fal fa-angle-double-right mr-2"></i>

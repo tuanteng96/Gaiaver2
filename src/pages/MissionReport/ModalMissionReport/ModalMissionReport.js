@@ -5,6 +5,7 @@ import moment from "moment";
 import "moment/locale/vi";
 import FormMissionReport from "./FormMissionReport/FormMissionReport";
 import DOMPurify from "dompurify";
+import FormComment from "./FormMissionReport/FormComment";
 
 moment.locale("vi");
 
@@ -14,6 +15,7 @@ ModalMissionReport.propTypes = {
   onSubmitMisson: PropTypes.func,
   defaultValue: PropTypes.object,
   isLoading: PropTypes.bool,
+  onSubmitComment: PropTypes.func,
 };
 
 function ModalMissionReport({
@@ -22,8 +24,10 @@ function ModalMissionReport({
   onSubmitMisson,
   defaultValue,
   isLoading,
+  onSubmitComment,
 }) {
   const [Points, setPoints] = useState(null);
+  const [Reports, setReports] = useState({});
 
   useEffect(() => {
     if (
@@ -31,6 +35,7 @@ function ModalMissionReport({
       defaultValue.Reports &&
       defaultValue.Reports.length > 0
     ) {
+      setReports(defaultValue.Reports[0]);
       const task = defaultValue.Reports;
       const idx1 = task[0]?.Point1List?.findIndex(
         (item) => item.Status === "done"
@@ -48,7 +53,9 @@ function ModalMissionReport({
       setPoints(null);
     }
   }, [defaultValue]);
+
   if (!defaultValue) return "";
+
   return (
     <Modal show={show} onHide={onHide} size="xl">
       <Modal.Header className="open-close" closeButton>
@@ -199,6 +206,40 @@ function ModalMissionReport({
                   __html: DOMPurify.sanitize(Points.Desc),
                 }}
               />
+              <h3 className="text-uppercase font-size-lg font-weight-boldest my-4">
+                <i className="far fa-comments-alt text-dark-70"></i> Phản hồi
+              </h3>
+              <FormComment defaultValue={Reports} onSubmit={onSubmitComment} />
+              <div>
+                {Reports &&
+                Reports.CommentList &&
+                Reports.CommentList.length > 0 ? (
+                  <div>
+                    {Reports.CommentList.map((item, index) => (
+                      <div
+                        className={`rounded p-3 text-dark-50 text-left mt-3 ${
+                          item.Status !== "user"
+                            ? "bg-gray-100"
+                            : "bg-light-primary"
+                        }`}
+                        key={index}
+                      >
+                        <div className="mb-1">
+                          <span className="text-dark-75 text-hover-primary font-weight-bold font-size-h6">
+                            {item.User && item.User.FullName}
+                          </span>
+                          <span class="font-size-sm pl-3">
+                            {moment(item.Date).fromNow()}
+                          </span>
+                        </div>
+                        {item.Comment}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  "Không có phản hồi"
+                )}
+              </div>
             </div>
             <div className="col-md-2 offset-md-1">
               <div className="ribbon ribbon-clip ribbon-left h-130px border border-gaia rounded">

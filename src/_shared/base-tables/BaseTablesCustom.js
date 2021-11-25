@@ -48,7 +48,8 @@ function BaseTablesCustom({
         {({ paginationProps, paginationTableProps }) => {
           return (
             <React.Fragment>
-              <div className="panel-body">
+              <div className="panel-body overflow-revert">
+                {props.children && props.children}
                 <BootstrapTable
                   scrollTop={"Bottom"}
                   bootstrap4

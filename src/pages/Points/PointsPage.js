@@ -7,6 +7,7 @@ import PointsCrud from "./_redux/PointsCrud";
 import { sleep } from "../../_ezs/_helpers/DelayHelpers";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import PointsFilter from "./PointsFilter/PointsFilter";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setLoadingBtn, setPermission } from "./_redux/pointsSlice";
@@ -50,6 +51,15 @@ function PointsPage(props) {
   const [filters, setFilters] = useState({
     Pi: 1,
     Ps: 10,
+    filter2: {
+      TaskGroupID: null,
+      TaskID: null,
+      UserID: null,
+      From: "",
+      To: "",
+      Method: "moi_nhat",
+      Status: ""
+    },
   });
   const [loading, setLoading] = useState(false);
   const [PageTotal, setPageTotal] = useState(0);
@@ -167,6 +177,16 @@ function PointsPage(props) {
     }
   };
 
+  const onFilters = async (values) => {
+    const newValue = {
+      ...values,
+      From: values.From ? moment(values.From).format("YYYY-MM-DD") : "",
+      To: values.To ? moment(values.To).format("YYYY-MM-DD") : "",
+    };
+    setListPoin([]);
+    setFilters((prev) => ({ ...prev, Pi: 1, filter2: newValue }));
+  };
+
   const PointChecked = async (item, type, ID, arr) => {
     const idx1 =
       arr &&
@@ -254,7 +274,7 @@ function PointsPage(props) {
     if (isDone1 || isDone2) {
       return (
         <span className="label label-primary label-pill label-inline ml-2">
-          Đã chấm
+          Đã duyệt
         </span>
       );
     }
@@ -334,6 +354,15 @@ function PointsPage(props) {
       attrs: { "data-title": "Báo cáo" },
     },
     {
+      dataField: `Desc`,
+      text: "Mô tả",
+      formatter: (cell, row) => <>{row.Desc ? row.Desc : "Không có mô tả"}</>,
+      headerStyle: () => {
+        return { minWidth: "150px", fontWeight: "800", maxWidth: "100%" };
+      },
+      attrs: { "data-title": "Mô tả" },
+    },
+    {
       dataField: `CreateDate`,
       text: "Ngày nộp",
       formatter: (cell, row) => (
@@ -373,7 +402,7 @@ function PointsPage(props) {
       },
       headerAlign: "center",
       headerStyle: () => {
-        return { minWidth: "100%", width: "110px" };
+        return { width: "110px" };
       },
       attrs: { "data-action": "true" },
     },
@@ -416,7 +445,13 @@ function PointsPage(props) {
           columns={columns}
           loading={loading}
           className="table-responsive-attr"
-        />
+        >
+          <PointsFilter
+            initialValues={filters.filter2}
+            onSubmit={onFilters}
+            loading={loading}
+          />
+        </BaseTablesCustom>
       </div>
       <ModalPoint
         show={isModal}

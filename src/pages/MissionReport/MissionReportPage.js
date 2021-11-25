@@ -5,11 +5,39 @@ import { toast } from "react-toastify";
 import MissionReportCrud from "./_redux/MissionReportCrud";
 import BaseTablesCustom from "../../_shared/base-tables/BaseTablesCustom";
 import ModalMissionReport from "./ModalMissionReport/ModalMissionReport";
+import Swal from "sweetalert2";
 
 import moment from "moment";
 import "moment/locale/vi";
+import PointsCrud from "../Points/_redux/PointsCrud";
+import { useDispatch } from "react-redux";
+import { sleep } from "../../_ezs/_helpers/DelayHelpers";
+import { setLoadingBtn } from "../Points/_redux/pointsSlice";
 
 moment.locale("vi");
+
+const showErrorPermiss = (error) => {
+  Swal.fire({
+    title: "Xảy ra lỗi",
+    html: `<div class="p-1">
+        <div class="mb-3">
+          ${error}
+        </div>
+      </div>`,
+    icon: "error",
+    showCancelButton: true,
+    showConfirmButton: false,
+    cancelButtonText: "Đóng",
+    buttonsStyling: false,
+    allowOutsideClick: false,
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
+    },
+  }).then(() => {
+    window.location.href = "/";
+  });
+};
 
 function MissionReportPage(props) {
   const [listMission, setListMission] = useState([]);
@@ -27,7 +55,7 @@ function MissionReportPage(props) {
   const [PageTotal, setPageTotal] = useState(0);
   const [isModal, setIsModal] = useState(false);
   const [defaultValue, setDefaultValue] = useState({});
-
+  const dispatch = useDispatch();
   const retrieveMission = async () => {
     !loading && setLoading(true);
     const params = getRequestParams(filters);
@@ -35,7 +63,7 @@ function MissionReportPage(props) {
     MissionReportCrud.getListMissionRp(params)
       .then((response) => {
         if (response.error) {
-          console.log(response.error);
+          showErrorPermiss(response.error);
         } else {
           const { list, total } = response.data;
           setPageTotal(total);
@@ -44,7 +72,7 @@ function MissionReportPage(props) {
         setLoading(false);
       })
       .catch(({ response }) => {
-        console.log(response);
+        showErrorPermiss(response.error);
       });
   };
 
@@ -147,6 +175,27 @@ function MissionReportPage(props) {
     return "Chưa có";
   };
 
+  const onSubmitComment = async (values, { resetForm }) => {
+    dispatch(setLoadingBtn({ Comment: true }));
+    try {
+      await PointsCrud.SendComment(values);
+      await sleep(500);
+      await retrieveMission();
+      dispatch(setLoadingBtn({ Comment: false }));
+      toast.success("Gửi phản hồi thành công.", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+      resetForm();
+    } catch ({ response }) {
+      dispatch(setLoadingBtn({ Comment: false }));
+      toast.error(response.data && response.data.error, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+    }
+  };
+
   const columns = [
     {
       dataField: "",
@@ -186,7 +235,7 @@ function MissionReportPage(props) {
         </>
       ),
       headerStyle: () => {
-        return { width: "220px", fontWeight: "800" };
+        return { minWidth: "220px", fontWeight: "800" };
       },
       attrs: { "data-title": "Hạn nộp" },
     },
@@ -197,7 +246,7 @@ function MissionReportPage(props) {
       headerAlign: "center",
       style: { textAlign: "center" },
       headerStyle: () => {
-        return { width: "150px", fontWeight: "800" };
+        return { minWidth: "150px", fontWeight: "800" };
       },
       attrs: { "data-title": "Hạn nộp" },
     },
@@ -206,7 +255,7 @@ function MissionReportPage(props) {
       text: "Điểm",
       formatter: (cell, row) => getPoint(row.Reports),
       headerStyle: () => {
-        return { width: "100px", fontWeight: "800" };
+        return { minWidth: "100px", fontWeight: "800" };
       },
       headerAlign: "center",
       style: { textAlign: "center" },
@@ -217,7 +266,7 @@ function MissionReportPage(props) {
       text: "#",
       formatter: (cell, row) => {
         return (
-          <div className="text-right">
+          <div className="text-center">
             <button
               type="button"
               className="btn btn-gaia btn-sm"
@@ -230,7 +279,7 @@ function MissionReportPage(props) {
       },
       headerAlign: "center",
       headerStyle: () => {
-        return { minWidth: "100%", width: "110px" };
+        return { width: "115px" };
       },
       attrs: { "data-action": "true" },
     },
@@ -281,6 +330,7 @@ function MissionReportPage(props) {
         onSubmitMisson={onSubmitMisson}
         defaultValue={defaultValue}
         isLoading={isLoading.MissonReport}
+        onSubmitComment={onSubmitComment}
       />
     </div>
   );

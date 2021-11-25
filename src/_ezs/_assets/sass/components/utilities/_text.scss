@@ -100,13 +100,12 @@ $color in $theme-text-colors {
     font-weight: $font-weight-900 !important;
 }
 
-
 // Line heights
 .line-height-0 {
     line-height: 0 !important;
 }
 
-.line-height-xs { 
+.line-height-xs {
     line-height: 0.75 !important;
 }
 
@@ -129,6 +128,10 @@ $color in $theme-text-colors {
 // Text transparent
 .text-transparent {
     color: transparent;
+}
+
+.text-transform-none {
+    text-transform: none !important;
 }
 
 .user-select-none {

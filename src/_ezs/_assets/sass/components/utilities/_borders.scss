@@ -289,3 +289,7 @@ $value in $theme-light-colors {
 .shadow-xs {
     box-shadow: $box-shadow-xs;
 }
+
+.border-gray {
+    border-color: #ddd !important;
+}

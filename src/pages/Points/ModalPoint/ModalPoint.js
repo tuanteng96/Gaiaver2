@@ -34,7 +34,6 @@ function ModalPoint({
     AdvPremiss: point.Permission && point.Permission.nang_cao,
     LoadingBtn: point.LoadingBtn,
   }));
-
   if (!defaultValue) return "";
   return (
     <Modal show={show} onHide={onHide} size="xl">
@@ -228,7 +227,7 @@ function ModalPoint({
                     <React.Fragment>
                       {defaultValue.CommentList.map((item, index) => (
                         <div
-                          className={`bg-gray-100 p-4 rounded ${
+                          className={`${item.Status !== "user" ? "bg-gray-100" : "bg-light-primary"} p-4 rounded ${
                             defaultValue.CommentList.length - 1 !== index &&
                             "mb-3"
                           }`}
