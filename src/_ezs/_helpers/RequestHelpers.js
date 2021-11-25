@@ -24,6 +24,9 @@ export const getRequestParams = (filters) => {
         if (filters.filter2.TaskID) {
             filter2.TaskID = filters.filter2.TaskID;
         }
+        if (filters.filter2.TaskIDs && filters.filter2.TaskIDs.length > 0) {
+            filter2.TaskIDs = filters.filter2.TaskIDs.map(item => item.ID);
+        }
         if (filters.filter2.UserID) {
             filter2.UserID = filters.filter2.UserID;
         }

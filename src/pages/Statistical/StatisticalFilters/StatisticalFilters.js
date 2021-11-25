@@ -3,16 +3,16 @@ import PropTypes from "prop-types";
 import { Form, Formik } from "formik";
 import Select from "react-select";
 
-import moment from "moment";
-import "moment/locale/vi";
 import DateTimePicker from "../../../_shared/DateTimePicker/DateTimePicker";
 import PointsCrud from "../../Points/_redux/PointsCrud";
 
+import moment from "moment";
+import "moment/locale/vi";
 moment.locale("vi");
 
 StatisticalFilters.propTypes = {
   initialValues: PropTypes.object,
-  onSubmit: PropTypes.object,
+  onSubmit: PropTypes.func,
   loading: PropTypes.bool,
 };
 
@@ -73,7 +73,7 @@ function StatisticalFilters({ initialValues, onSubmit, loading }) {
         const { values, setFieldValue } = formikProps;
         return (
           <Form>
-            <div className="d-flex align-items-center flex-wrap">
+            <div className="d-flex flex-wrap align-items-end">
               <div className="w-250px mr-5 mb-0">
                 <div className="form-group">
                   <label className="mb-1">Nhóm nhiệm vụ</label>
@@ -86,16 +86,16 @@ function StatisticalFilters({ initialValues, onSubmit, loading }) {
                     name="TaskGroupID"
                     options={listTaskGroup}
                     placeholder="Chọn nhóm nhiệm vụ"
-                    // onChange={(otp) => {
-                    //   setFieldValue("TaskID", otp && otp.ID);
-                    // }}
-                    // value={
-                    //   listMission
-                    //     ? listMission.filter(
-                    //         (item) => item.ID === values.TaskID
-                    //       )
-                    //     : []
-                    // }
+                    onChange={(otp) => {
+                      setFieldValue("TaskGroupID", otp && otp.ID);
+                    }}
+                    value={
+                      listTaskGroup
+                        ? listTaskGroup.filter(
+                            (item) => item.ID === values.TaskGroupID
+                          )
+                        : []
+                    }
                   />
                 </div>
               </div>
@@ -109,13 +109,13 @@ function StatisticalFilters({ initialValues, onSubmit, loading }) {
                     isDisabled={loadingFech.mission}
                     isLoading={loadingFech.mission}
                     isClearable={true}
-                    name="TaskID"
+                    name="TaskIDs"
                     options={listMission}
                     placeholder="Chọn nhiệm vụ"
-                    // onChange={(otp) => {
-                    //   setFieldValue("UserID", otp && otp.ID);
-                    // }}
-                    //value={values.}
+                    onChange={(otp) => {
+                      setFieldValue("TaskIDs", otp ? otp : []);
+                    }}
+                    value={values.TaskIDs}
                   />
                 </div>
               </div>
@@ -165,9 +165,8 @@ function StatisticalFilters({ initialValues, onSubmit, loading }) {
                   />
                 </div>
               </div>
-              <div className="w-250px">
+              <div>
                 <div className="form-group">
-                  <label className="mb-1 d-block opacity-0">-</label>
                   <button
                     type="submit"
                     className={`btn btn-primary w-auto ${
@@ -178,6 +177,17 @@ function StatisticalFilters({ initialValues, onSubmit, loading }) {
                   >
                     <i className="fal fa-search mr-1"></i>
                     Tìm kiếm
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn btn-success w-auto ml-2 ${
+                      loading
+                        ? "spinner spinner-white spinner-right disabled"
+                        : ""
+                    }`}
+                  >
+                    <i className="fal fa-file-csv"></i>
+                    Xuất Excel
                   </button>
                 </div>
               </div>

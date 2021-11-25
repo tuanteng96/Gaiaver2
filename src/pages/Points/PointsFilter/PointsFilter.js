@@ -86,7 +86,7 @@ function PointsFilter({ onSubmit, initialValues, loading }) {
         const { values, handleBlur, setFieldValue } = formikProps;
         return (
           <Form>
-            <div className="d-flex align-items-center flex-wrap">
+            <div className="d-flex align-items-end flex-wrap">
               <div className="w-250px mr-5 mb-0">
                 <div className="form-group">
                   <label className="mb-1">Nhiệm vụ</label>
@@ -225,7 +225,6 @@ function PointsFilter({ onSubmit, initialValues, loading }) {
               </div>
               <div className="w-250px">
                 <div className="form-group">
-                  <label className="mb-1 d-block opacity-0">-</label>
                   <button
                     type="submit"
                     className={`btn btn-primary w-auto ${

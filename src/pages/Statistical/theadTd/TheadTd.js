@@ -27,7 +27,7 @@ function TheadTd({ item, index, updateElmHead }) {
       colSpan={3}
       key={index}
     >
-      {item.Title}
+      {item.Task && item.Task.Title}
     </th>
   );
 }

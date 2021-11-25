@@ -2,77 +2,84 @@ import React, { useState, useEffect } from "react";
 import LoaderTable from "../../layout/components/Loaders/LoaderTable";
 import { isDev } from "../../_ezs/_helpers/AssetsHelpers";
 import { getRequestParams } from "../../_ezs/_helpers/RequestHelpers";
-import { sleep } from "../../_ezs/_helpers/DelayHelpers";
 import TheadTd from "./theadTd/TheadTd";
 import StatisticalFilters from "./StatisticalFilters/StatisticalFilters";
+import Swal from "sweetalert2";
 
-const data = [
-  {
-    ID: 1,
-    Title: "Nộp bài K7 Sử dụng internet thông minh tiết 1	",
-  },
-  {
-    ID: 2,
-    Title: "Nộp bài K7 Sử dụng internet thông minh tiết 2	",
-  },
-  {
-    ID: 3,
-    Title: "Nộp bài K7 Sử dụng internet thông minh tiết 3",
-  },
-  {
-    ID: 4,
-    Title: "Nộp Poster K7 Sử dụng internet thông minh	",
-  },
-  {
-    ID: 5,
-    Title: "THCS - TEAM ONL - Nộp video quay K7 internet tiết 1	",
-  },
-  {
-    ID: 6,
-    Title: "THCS - TEAM ONL - Nộp video quay K7 internet tiết 2",
-  },
-];
+import moment from "moment";
+import "moment/locale/vi";
+import StatisticalCrud from "./_redux/StatisticalCrud";
+moment.locale("vi");
+
+const showErrorPermiss = () => {
+  Swal.fire({
+    title: "Truy cập bị cấm",
+    html: `<div class="p-1">
+        <div class="mb-3">
+          Bạn không có quyền truy cập chức năng Thống kê.
+        </div>
+      </div>`,
+    icon: "error",
+    showCancelButton: true,
+    showConfirmButton: false,
+    cancelButtonText: "Đóng",
+    buttonsStyling: false,
+    allowOutsideClick: false,
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
+    },
+  }).then(() => {
+    window.location.href = "/";
+  });
+};
 
 function StatisticalPage(props) {
-  const [listStatis, setListStatis] = useState([]);
+  const [listStatis, setListStatis] = useState({ Tasks: {}, List: [] });
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
     filter2: {
       Key: "",
+      Method: "moi_nhat",
+      TaskGroupID: "",
+      TaskIDs: [],
+      From: "",
+      To: "",
     },
     Pi: 1,
     Ps: 10,
   });
   const [elmHead, setElmHead] = useState(0);
 
-  const retrieveStatistical = async () => {
+  const retrieveStatistical = () => {
     !loading && setLoading(true);
     const params = getRequestParams(filters);
+    console.log(params);
 
-    try {
-      await sleep(1000);
-      console.log(params);
-      setListStatis(data);
-      setLoading(false);
-      setFilters(filters);
-    } catch (error) {
-      console.log(error);
-    }
+    StatisticalCrud.getList(params)
+      .then(({ data }) => {
+        let newTasks =
+          data && data.length > 0 ? data.filter((item) => !item.User) : null;
+        if (newTasks && newTasks.length > 0) newTasks = newTasks[0].Tasks;
+        else {
+          newTasks = {};
+        }
+        const newList =
+          data && data.length > 0 ? data.filter((item) => item.User) : [];
 
-    // MissionReportCrud.getListMissionRp(params)
-    //   .then((response) => {
-    //     if (response.error) {
-    //       showErrorPermiss(response.error);
-    //     } else {
-    //       const { list, total } = response.data;
-    //       setPageTotal(total);
-    //       setListMission(list);
-    //     }
-    //     setLoading(false);
-    //   })
-    //   .catch(({ response }) => {
-    //     showErrorPermiss(response.error);
-    //   });
+        setListStatis((prev) => ({
+          ...prev,
+          Tasks: newTasks,
+          List: newList,
+          Current: data,
+        }));
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        showErrorPermiss();
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -82,6 +89,23 @@ function StatisticalPage(props) {
 
   const updateElmHead = (height) => {
     setElmHead(height);
+  };
+
+  const submitFilters = (values) => {
+    console.log(values);
+    const newValues = {
+      ...values,
+      From: values.From && moment(values.From).format("YYYY-MM-DD"),
+      To: values.To && moment(values.To).format("YYYY-MM-DD"),
+    };
+    setFilters((prev) => ({ ...prev, filter2: newValues }));
+  };
+
+  const checkStatusPoint = (status) => {
+    if (status === "DA_NOP") return "bg-success";
+    if (status === "DA_CHAM") return "bg-primary";
+    if (status === "CHUA_NOP") return "bg-danger";
+    return "";
   };
 
   return (
@@ -96,7 +120,11 @@ function StatisticalPage(props) {
       <div className="hpanel hgreen">
         <div className="panel-heading hbuilt">Danh sách</div>
         <div className="panel-body overflow-revert">
-          <StatisticalFilters loading={loading} initialValues={{}} />
+          <StatisticalFilters
+            loading={loading}
+            initialValues={filters.filter2}
+            onSubmit={submitFilters}
+          />
           {loading && <LoaderTable text="Đang tải thống kê ..." />}
           {!loading && (
             <div className="d-flex align-items-baseline">
@@ -123,12 +151,24 @@ function StatisticalPage(props) {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td className="text-center">GV01</td>
-                      <td>Nguyễn Tài Tuấn</td>
-                      <td className="text-center">120</td>
-                      <td className="text-center">80</td>
-                    </tr>
+                    {listStatis &&
+                      listStatis.List &&
+                      listStatis.List.length > 0 &&
+                      listStatis.List.map((teacher, index) => (
+                        <tr key={index}>
+                          <td className="text-center">
+                            {teacher.User.ID}
+                            {teacher.User && teacher.User.Code}
+                          </td>
+                          <td>{teacher.User && teacher.User.FullName}</td>
+                          <td className="text-center">
+                            {teacher.tong && teacher.tong}
+                          </td>
+                          <td className="text-center">
+                            {teacher.tb && teacher.tb}
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
@@ -138,49 +178,85 @@ function StatisticalPage(props) {
                     <thead>
                       <tr>
                         {listStatis &&
-                          listStatis.map((item, index) => (
+                          listStatis.Tasks &&
+                          listStatis.Tasks.length > 0 &&
+                          listStatis.Tasks.map((task, index) => (
                             <TheadTd
                               key={index}
                               index={index}
-                              item={item}
+                              item={task}
                               updateElmHead={updateElmHead}
                             />
                           ))}
                       </tr>
                       <tr className="bg-gray-100">
                         {listStatis &&
-                          listStatis.map((item, index) => (
+                          listStatis.Tasks &&
+                          listStatis.Tasks.length > 0 &&
+                          listStatis.Tasks.map((task, index) => (
                             <React.Fragment key={index}>
                               <th
                                 className={`text-center ${
                                   index === 0 && "border-left-0"
                                 }`}
                               >
-                                SL : 100
+                                SL :
+                                <span className="pl-1">
+                                  {task && task.Value && task.Value.tong_so
+                                    ? task.Value.tong_so
+                                    : 0}
+                                </span>
                               </th>
-                              <th className="text-center">Nộp : 50</th>
-                              <th className="text-center">Chấm : 50</th>
+                              <th className="text-center">
+                                Nộp :
+                                <span className="pl-1">
+                                  {task && task.Value && task.Value.da_nop
+                                    ? task.Value.da_nop
+                                    : 0}
+                                </span>
+                              </th>
+                              <th className="text-center">
+                                Chấm :
+                                <span className="pl-1">
+                                  {task && task.Value && task.Value.da_cham
+                                    ? task.Value.da_cham
+                                    : 0}
+                                </span>
+                              </th>
                             </React.Fragment>
                           ))}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        {listStatis &&
-                          listStatis.map((item, index) => (
-                            <React.Fragment key={index}>
-                              <td
-                                key={index}
-                                colSpan={3}
-                                className={`text-center ${
-                                  index === 0 && "border-left-0"
-                                }`}
-                              >
-                                1
-                              </td>
-                            </React.Fragment>
-                          ))}
-                      </tr>
+                      {listStatis &&
+                        listStatis.List &&
+                        listStatis.List.length > 0 &&
+                        listStatis.List.map((teacher, index) => (
+                          <tr key={index}>
+                            {teacher.Tasks &&
+                              teacher.Tasks.map((item, index) => (
+                                <React.Fragment key={index}>
+                                  <td
+                                    key={index}
+                                    colSpan={3}
+                                    className={`text-center ${checkStatusPoint(
+                                      item.Value.trang_thai
+                                    )} ${index === 0 && "border-left-0"}`}
+                                  >
+                                    {item.Value && item.Value.diem ? (
+                                      <span className="text-white font-weight-bold">
+                                        {item.Value.diem}
+                                      </span>
+                                    ) : (
+                                      <div className="opacity-0">
+                                        {item.Task.ID}
+                                      </div>
+                                    )}
+                                  </td>
+                                </React.Fragment>
+                              ))}
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
