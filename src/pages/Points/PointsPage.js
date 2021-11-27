@@ -332,7 +332,7 @@ function PointsPage(props) {
       dataField: "Task",
       text: "Nhiệm vụ",
       headerStyle: () => {
-        return { minWidth: "300px", fontWeight: "800" };
+        return { minWidth: "200px", fontWeight: "800" };
       },
       formatter: (cell, row) =>
         row.Task && row.Task.Title ? row.Task.Title : "Chưa có tên",
@@ -349,7 +349,7 @@ function PointsPage(props) {
         );
       },
       headerStyle: () => {
-        return { minWidth: "150px", fontWeight: "800", maxWidth: "400px" };
+        return { minWidth: "150px", fontWeight: "800"};
       },
       attrs: { "data-title": "Báo cáo" },
     },
@@ -358,7 +358,7 @@ function PointsPage(props) {
       text: "Mô tả",
       formatter: (cell, row) => <>{row.Desc ? row.Desc : "Không có mô tả"}</>,
       headerStyle: () => {
-        return { minWidth: "150px", fontWeight: "800", maxWidth: "100%" };
+        return { minWidth: "150px", fontWeight: "800"};
       },
       attrs: { "data-title": "Mô tả" },
     },
@@ -369,7 +369,7 @@ function PointsPage(props) {
         <>{moment(row.CreateDate).format("HH:mm:ss DD/MM/YYYY")}</>
       ),
       headerStyle: () => {
-        return { minWidth: "150px", fontWeight: "800", maxWidth: "100%" };
+        return { minWidth: "150px", fontWeight: "800"};
       },
       attrs: { "data-title": "Ngày nộp" },
     },
@@ -402,7 +402,7 @@ function PointsPage(props) {
       },
       headerAlign: "center",
       headerStyle: () => {
-        return { width: "110px" };
+        return { maxWidth: "110px", minWidth: "110px" };
       },
       attrs: { "data-action": "true" },
     },

@@ -18,7 +18,7 @@ function PointsListFiles({ FilesJson }) {
           onClick={() => setIsFull(!isFull)}
         >
           <i className="fal fa-angle-double-right mr-2"></i>
-          <ins className="text-truncate max-w-400px d-block">Thu gọn</ins>
+          <ins className="text-truncate max-w-100 d-block">Thu gọn</ins>
         </div>
       </div>
     );
@@ -35,7 +35,7 @@ function PointsListFiles({ FilesJson }) {
           onClick={() => setIsFull(!isFull)}
         >
           <i className="fal fa-angle-double-right mr-2"></i>
-          <ins className="text-truncate max-w-400px d-block">Xem thêm</ins>
+          <ins className="text-truncate max-w-100 d-block">Xem thêm</ins>
         </div>
       )}
     </div>

@@ -16,7 +16,9 @@ function PointsFiles({ file }) {
       onClick={() => handleClick(file.link)}
     >
       <i className="fal fa-link mr-2"></i>
-      <ins className="text-truncate max-w-400px d-block">{file.link}</ins>
+      <ins className="text-truncate max-w-100px max-w-xxl-400px d-block">
+        {file.link}
+      </ins>
     </div>
   );
 }

@@ -9,6 +9,9 @@ import Swal from "sweetalert2";
 import moment from "moment";
 import "moment/locale/vi";
 import StatisticalCrud from "./_redux/StatisticalCrud";
+import { useDispatch, useSelector } from "react-redux";
+import { setPermission } from "./_redux/StatisticalSlice";
+import { useWindowSize } from "../../hook/useResize";
 moment.locale("vi");
 
 const showErrorPermiss = () => {
@@ -35,6 +38,7 @@ const showErrorPermiss = () => {
 };
 
 function StatisticalPage(props) {
+  const { Permission, R_Token } = useSelector((state) => state.statistical);
   const [listStatis, setListStatis] = useState({ Tasks: {}, List: [] });
   const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState({
@@ -51,12 +55,15 @@ function StatisticalPage(props) {
   });
   const [elmHead, setElmHead] = useState(0);
 
+  const { width } = useWindowSize();
+
+  const dispatch = useDispatch();
+
   const retrieveStatistical = () => {
     !loading && setLoading(true);
     const params = getRequestParams(filters);
-    console.log(params);
 
-    StatisticalCrud.getList(params)
+    StatisticalCrud.getList(params, R_Token)
       .then(({ data }) => {
         let newTasks =
           data && data.length > 0 ? data.filter((item) => !item.User) : null;
@@ -71,13 +78,14 @@ function StatisticalPage(props) {
           ...prev,
           Tasks: newTasks,
           List: newList,
-          Current: data,
+          Current:
+            data && data.filter((item) => item.Tasks && item.Tasks.length > 0),
         }));
         setLoading(false);
+        dispatch(setPermission({}));
       })
       .catch((error) => {
-        console.log(error);
-        showErrorPermiss();
+        dispatch(setPermission(null));
         setLoading(false);
       });
   };
@@ -87,12 +95,17 @@ function StatisticalPage(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
+  useEffect(() => {
+    if (Permission === null) {
+      showErrorPermiss();
+    }
+  }, [Permission]);
+
   const updateElmHead = (height) => {
     setElmHead(height);
   };
 
   const submitFilters = (values) => {
-    console.log(values);
     const newValues = {
       ...values,
       From: values.From && moment(values.From).format("YYYY-MM-DD"),
@@ -127,145 +140,267 @@ function StatisticalPage(props) {
           />
           {loading && <LoaderTable text="Đang tải thống kê ..." />}
           {!loading && (
-            <div className="d-flex align-items-baseline">
-              <div className="w-425px">
-                <table className="table table-bordered mb-0">
-                  <thead>
-                    <tr
-                      style={{
-                        height: `${elmHead}px`,
-                      }}
-                    >
-                      <th
-                        className="text-center vertical-align-middle"
-                        colSpan={4}
-                      >
-                        Giáo viên
-                      </th>
-                    </tr>
-                    <tr className="bg-gray-100">
-                      <th className="text-center">Mã</th>
-                      <th>Tên giáo viên</th>
-                      <th className="text-center">TĐ</th>
-                      <th className="text-center border-right-0">TB</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {listStatis &&
-                      listStatis.List &&
-                      listStatis.List.length > 0 &&
-                      listStatis.List.map((teacher, index) => (
-                        <tr key={index}>
-                          <td className="text-center">
-                            {teacher.User.ID}
-                            {teacher.User && teacher.User.Code}
-                          </td>
-                          <td>{teacher.User && teacher.User.FullName}</td>
-                          <td className="text-center">
-                            {teacher.tong && teacher.tong}
-                          </td>
-                          <td className="text-center">
-                            {teacher.tb && teacher.tb}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="flex-1">
-                <div className="react-bootstrap-table table-responsive style-scrollbar pb-2">
-                  <table className="table table-bordered mb-0 border-left-0">
-                    <thead>
-                      <tr>
-                        {listStatis &&
-                          listStatis.Tasks &&
-                          listStatis.Tasks.length > 0 &&
-                          listStatis.Tasks.map((task, index) => (
-                            <TheadTd
-                              key={index}
-                              index={index}
-                              item={task}
-                              updateElmHead={updateElmHead}
-                            />
-                          ))}
-                      </tr>
-                      <tr className="bg-gray-100">
-                        {listStatis &&
-                          listStatis.Tasks &&
-                          listStatis.Tasks.length > 0 &&
-                          listStatis.Tasks.map((task, index) => (
-                            <React.Fragment key={index}>
+            <React.Fragment>
+              {listStatis.Current && listStatis.Current.length > 0 ? (
+                <React.Fragment>
+                  {width > 767 && (
+                    <div className="d-flex align-items-stretch">
+                      <div className="w-425px">
+                        <table className="table table-bordered mb-0">
+                          <thead>
+                            <tr
+                              style={{
+                                height: `${elmHead}px`,
+                              }}
+                            >
                               <th
-                                className={`text-center ${
-                                  index === 0 && "border-left-0"
-                                }`}
+                                className="text-center vertical-align-middle"
+                                colSpan={4}
                               >
-                                SL :
-                                <span className="pl-1">
-                                  {task && task.Value && task.Value.tong_so
-                                    ? task.Value.tong_so
-                                    : 0}
-                                </span>
+                                Giáo viên
                               </th>
-                              <th className="text-center">
-                                Nộp :
-                                <span className="pl-1">
-                                  {task && task.Value && task.Value.da_nop
-                                    ? task.Value.da_nop
-                                    : 0}
-                                </span>
-                              </th>
-                              <th className="text-center">
-                                Chấm :
-                                <span className="pl-1">
-                                  {task && task.Value && task.Value.da_cham
-                                    ? task.Value.da_cham
-                                    : 0}
-                                </span>
-                              </th>
-                            </React.Fragment>
-                          ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {listStatis &&
-                        listStatis.List &&
-                        listStatis.List.length > 0 &&
-                        listStatis.List.map((teacher, index) => (
-                          <tr key={index}>
-                            {teacher.Tasks &&
-                              teacher.Tasks.map((item, index) => (
-                                <React.Fragment key={index}>
-                                  <td
-                                    key={index}
-                                    colSpan={3}
-                                    className={`text-center ${checkStatusPoint(
-                                      item.Value.trang_thai
-                                    )} ${index === 0 && "border-left-0"}`}
-                                  >
-                                    {item.Value && item.Value.diem ? (
-                                      <span className="text-white font-weight-bold">
-                                        {item.Value.diem}
-                                      </span>
-                                    ) : (
-                                      <div className="opacity-0">
-                                        {item.Task.ID}
-                                      </div>
-                                    )}
+                            </tr>
+                            <tr className="bg-gray-100">
+                              <th>Mã</th>
+                              <th>Tên giáo viên</th>
+                              <th className="text-center">TĐ</th>
+                              <th className="text-center border-right-0">TB</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {listStatis &&
+                              listStatis.List &&
+                              listStatis.List.length > 0 &&
+                              listStatis.List.map((teacher, index) => (
+                                <tr key={index}>
+                                  <td>{teacher.User && teacher.User.Code}</td>
+                                  <td>
+                                    {teacher.User && teacher.User.FullName}
                                   </td>
+                                  <td className="text-center">
+                                    {teacher.tong && teacher.tong}
+                                  </td>
+                                  <td className="text-center">
+                                    {teacher.tb && teacher.tb}
+                                  </td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className="flex-1">
+                        <div className="react-bootstrap-table table-responsive style-scrollbar pb-2">
+                          <table className="table table-bordered mb-0 border-left-0">
+                            <thead>
+                              <tr>
+                                {listStatis &&
+                                  listStatis.Tasks &&
+                                  listStatis.Tasks.length > 0 &&
+                                  listStatis.Tasks.map((task, index) => (
+                                    <TheadTd
+                                      key={index}
+                                      index={index}
+                                      item={task}
+                                      updateElmHead={updateElmHead}
+                                    />
+                                  ))}
+                              </tr>
+                              <tr className="bg-gray-100">
+                                {listStatis &&
+                                  listStatis.Tasks &&
+                                  listStatis.Tasks.length > 0 &&
+                                  listStatis.Tasks.map((task, index) => (
+                                    <React.Fragment key={index}>
+                                      <th
+                                        className={`text-center ${
+                                          index === 0 && "border-left-0"
+                                        }`}
+                                      >
+                                        SL :
+                                        <span className="pl-1">
+                                          {task &&
+                                          task.Value &&
+                                          task.Value.tong_so
+                                            ? task.Value.tong_so
+                                            : 0}
+                                        </span>
+                                      </th>
+                                      <th className="text-center">
+                                        Nộp :
+                                        <span className="pl-1">
+                                          {task &&
+                                          task.Value &&
+                                          task.Value.da_nop
+                                            ? task.Value.da_nop
+                                            : 0}
+                                        </span>
+                                      </th>
+                                      <th className="text-center">
+                                        Chấm :
+                                        <span className="pl-1">
+                                          {task &&
+                                          task.Value &&
+                                          task.Value.da_cham
+                                            ? task.Value.da_cham
+                                            : 0}
+                                        </span>
+                                      </th>
+                                    </React.Fragment>
+                                  ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {listStatis &&
+                                listStatis.List &&
+                                listStatis.List.length > 0 &&
+                                listStatis.List.map((teacher, index) => (
+                                  <tr key={index}>
+                                    {teacher.Tasks &&
+                                      teacher.Tasks.map((item, index) => (
+                                        <React.Fragment key={index}>
+                                          <td
+                                            key={index}
+                                            colSpan={3}
+                                            className={`text-center ${checkStatusPoint(
+                                              item.Value.trang_thai
+                                            )} ${
+                                              index === 0 && "border-left-0"
+                                            }`}
+                                          >
+                                            {item.Value && item.Value.diem ? (
+                                              <span className="text-white font-weight-bold">
+                                                {item.Value.diem}
+                                              </span>
+                                            ) : (
+                                              <div className="opacity-0">
+                                                {item.Task.ID}
+                                              </div>
+                                            )}
+                                          </td>
+                                        </React.Fragment>
+                                      ))}
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {width < 767 && (
+                    <div className="react-bootstrap-table table-responsive style-scrollbar pb-2">
+                      <table className="table table-bordered mb-0">
+                        <thead>
+                          <tr>
+                            <th
+                              className="text-center vertical-align-middle min-w-400px"
+                              colSpan={4}
+                            >
+                              Giáo viên
+                            </th>
+                            {listStatis &&
+                              listStatis.Tasks &&
+                              listStatis.Tasks.length > 0 &&
+                              listStatis.Tasks.map((task, index) => (
+                                <TheadTd
+                                  key={index}
+                                  index={index}
+                                  item={task}
+                                  updateElmHead={updateElmHead}
+                                />
+                              ))}
+                          </tr>
+                          <tr className="bg-gray-100">
+                            <th>Mã</th>
+                            <th>Tên giáo viên</th>
+                            <th className="text-center">TĐ</th>
+                            <th className="text-center">TB</th>
+                            {listStatis &&
+                              listStatis.Tasks &&
+                              listStatis.Tasks.length > 0 &&
+                              listStatis.Tasks.map((task, index) => (
+                                <React.Fragment key={index}>
+                                  <th className={`text-center`}>
+                                    SL :
+                                    <span className="pl-1">
+                                      {task && task.Value && task.Value.tong_so
+                                        ? task.Value.tong_so
+                                        : 0}
+                                    </span>
+                                  </th>
+                                  <th className="text-center">
+                                    Nộp :
+                                    <span className="pl-1">
+                                      {task && task.Value && task.Value.da_nop
+                                        ? task.Value.da_nop
+                                        : 0}
+                                    </span>
+                                  </th>
+                                  <th className="text-center">
+                                    Chấm :
+                                    <span className="pl-1">
+                                      {task && task.Value && task.Value.da_cham
+                                        ? task.Value.da_cham
+                                        : 0}
+                                    </span>
+                                  </th>
                                 </React.Fragment>
                               ))}
                           </tr>
-                        ))}
-                    </tbody>
-                  </table>
+                        </thead>
+                        <tbody>
+                          {listStatis &&
+                            listStatis.List &&
+                            listStatis.List.length > 0 &&
+                            listStatis.List.map((teacher, index) => (
+                              <tr key={index}>
+                                <td>{teacher.User && teacher.User.Code}</td>
+                                <td>{teacher.User && teacher.User.FullName}</td>
+                                <td className="text-center">
+                                  {teacher.tong && teacher.tong}
+                                </td>
+                                <td className="text-center">
+                                  {teacher.tb && teacher.tb}
+                                </td>
+                                {teacher.Tasks &&
+                                  teacher.Tasks.map((item, index) => (
+                                    <React.Fragment key={index}>
+                                      <td
+                                        key={index}
+                                        colSpan={3}
+                                        className={`text-center ${checkStatusPoint(
+                                          item.Value.trang_thai
+                                        )} ${index === 0 && "border-left-0"}`}
+                                      >
+                                        {item.Value && item.Value.diem ? (
+                                          <span className="text-white font-weight-bold">
+                                            {item.Value.diem}
+                                          </span>
+                                        ) : (
+                                          <div className="opacity-0">
+                                            {item.Task.ID}
+                                          </div>
+                                        )}
+                                      </td>
+                                    </React.Fragment>
+                                  ))}
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </React.Fragment>
+              ) : (
+                <div className="border p-8 min-h-250px font-size-md rounded d-flex align-items-center justify-content-center">
+                  Không có dữ liệu
                 </div>
-              </div>
-            </div>
+              )}
+            </React.Fragment>
           )}
         </div>
-        <div className="panel-footer d-flex justify-content-between bg-white py-5">
-          <div className="line-height-md">
+        <div className="panel-footer d-flex justify-content-center justify-content-md-between align-items-center flex-column flex-md-row bg-white py-5">
+          <div className="line-height-md mb-3 mb-md-0">
             <span>
               <b className="font-weight-boldest">TĐ</b> : Tổng điểm
             </span>
