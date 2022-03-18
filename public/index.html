@@ -17,6 +17,10 @@
     <!--adđ font-->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300&display=swap" rel="stylesheet">
+
+    <!-- SPLASH SCREEN-->
+    <link rel="stylesheet" id="layout-styles-anchor" href="%PUBLIC_URL%/css/splash-screen.css" />
+
     <!-- <link href="https://ver2.hoccunggaia.edu.vn/admin/themes/styles/style.css" rel="stylesheet" /> -->
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
@@ -33,6 +37,12 @@
 <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <div id="splash-screen" class="kt-splash-screen">
+        <img src="%PUBLIC_URL%/media/logos/logo-gaia.png" alt="EZS - Phần mềm quản lý Spa" />
+        <svg class="splash-spinner" viewBox="0 0 50 50">
+      <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+    </svg>
+    </div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

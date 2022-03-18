@@ -14,7 +14,7 @@ const fpPromise = FingerprintJS.load({
 });
 
 function TeachingPage(props) {
-  const [listTeaching, setListTeaching] = useState(null);
+  const [ShowTeaching, setShowTeaching] = useState(false);
   const { MachineCode, MachineUser, Token } = useSelector(({ auth }) => ({
     Token: auth.Token, // lấy trong store.js
     MachineCode: auth.MachineCode,
@@ -32,14 +32,13 @@ function TeachingPage(props) {
   }, []);
 
   useEffect(() => {
-    // setListTeaching([0]);
-    // return false;
     if (Token && MachineUser) {
       loginMechine();
     } else {
       Swal.fire({
         title: "Cảnh báo truy cập",
-        text: "Chức năng chỉ cho phép duy nhất một máy tính truy cập. Nếu đây là máy tính cá nhân sẽ sử dụng đê dạy học Online vui lòng xác nhận để bắt đầu sử dụng!",
+        text:
+          "Chức năng chỉ cho phép duy nhất một máy tính truy cập. Nếu đây là máy tính cá nhân sẽ sử dụng đê dạy học Online vui lòng xác nhận để bắt đầu sử dụng!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Đồng ý",
@@ -51,9 +50,9 @@ function TeachingPage(props) {
           cancelButton: "btn btn-danger",
         },
         showLoaderOnConfirm: true,
-        preConfirm: function () {
+        preConfirm: function() {
           // Là function và return  ra Promise
-          return new Promise(function (resolve, reject) {
+          return new Promise(function(resolve, reject) {
             // sử lý lấy token trên máy
             fpPromise
               .then((fp) => fp.get())
@@ -61,46 +60,34 @@ function TeachingPage(props) {
                 const { visitorId } = result;
                 try {
                   // Fech Api
-                  await TeachingCrud.checkMachine({
+                  const { error } = await TeachingCrud.checkMachine({
                     MachineKey: visitorId,
                   });
-                  // Get data
-                  const action = setMachine(visitorId);
-                  dispatch(action);
+                  if (!error) {
+                    const action = setMachine(visitorId);
+                    dispatch(action);
 
-                  Swal.fire({
-                    title: "Đăng ký thành công.",
-                    text: "Hệ thống đã ghi nhận và cho phép máy tính này truy cập chức năng: Dạy học Online",
-                    icon: "success",
-                    customClass: {
-                      confirmButton: "btn btn-success",
-                      cancelButton: "btn btn-danger",
-                    },
-                    allowOutsideClick: false,
-                  });
-                  setListTeaching([0]);
+                    Swal.fire({
+                      title: "Đăng ký thành công.",
+                      text:
+                        "Hệ thống đã ghi nhận và cho phép máy tính này truy cập chức năng: Dạy học Online",
+                      icon: "success",
+                      customClass: {
+                        confirmButton: "btn btn-success",
+                        cancelButton: "btn btn-danger",
+                      },
+                      allowOutsideClick: false,
+                    });
+                    setShowTeaching(true);
+                  } else {
+                    SwlNotAccess(error);
+                  }
                 } catch ({ response }) {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Xảy ra lỗi !",
-                    html: `<div>Không thể đăng ký truy cập cho máy tính này. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${response.data.error}</div>`,
-                    customClass: {
-                      confirmButton: "btn btn-success",
-                    },
-                    allowOutsideClick: false,
-                  }).then(() => (window.location.href = "/"));
+                  SwlNotAccess(response.data.error);
                 }
               })
               .catch(({ response }) => {
-                Swal.fire({
-                  icon: "error",
-                  title: "Xảy ra lỗi !",
-                  html: `<div>Không thể xác định được máy truy cập. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${response.data.error}</div>`,
-                  customClass: {
-                    confirmButton: "btn btn-success",
-                  },
-                  allowOutsideClick: false,
-                }).then(() => (window.location.href = "/"));
+                SwlNotAccess(response.data.error);
               });
           });
         },
@@ -144,9 +131,9 @@ function TeachingPage(props) {
         showCancelButton: true,
         confirmButtonText: "Xin cấp quyền truy cập",
         showLoaderOnConfirm: true,
-        preConfirm: function () {
+        preConfirm: function() {
           const val = document.getElementById("val-input").value; // Get value input
-          return new Promise(function (resolve, reject) {
+          return new Promise(function(resolve, reject) {
             TeachingCrud.sendPermission({ UserDesc: val })
               .then((data) => {
                 resolve();
@@ -170,7 +157,8 @@ function TeachingPage(props) {
           // Thông báo đợi cấp
           Swal.fire({
             title: "Yêu cầu cấp quyền truy cập thay thế thành công",
-            text: "Hệ thống đã tiếp nhận thông tin và đang tiến hành xử lý và phản hồi sớm lại bạn.",
+            text:
+              "Hệ thống đã tiếp nhận thông tin và đang tiến hành xử lý và phản hồi sớm lại bạn.",
             icon: "info",
             allowOutsideClick: false,
             customClass: {
@@ -183,25 +171,16 @@ function TeachingPage(props) {
       });
     } else {
       try {
-        await TeachingCrud.checkMachine({
+        const { error } = await TeachingCrud.checkMachine({
           MachineKey: MachineCode,
         });
-        // Get API List bài học
-        setListTeaching([0]);
+        if (error) {
+          SwlNotAccess(error);
+        } else {
+          setShowTeaching(true);
+        }
       } catch ({ response }) {
-        Swal.fire({
-          icon: "error",
-          title: "Xảy ra lỗi !",
-          html: `<div>Không thể đăng ký truy cập cho máy tính này. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${response.data.error}</div>`,
-          customClass: {
-            confirmButton: "btn btn-success",
-          },
-          allowOutsideClick: false,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            window.location.href = "/";
-          }
-        });
+        SwlNotAccess(response.data.error);
       }
     }
   };
@@ -219,31 +198,39 @@ function TeachingPage(props) {
             const action = setMachine(visitorId);
             dispatch(action);
           });
-      }
-      await TeachingCrud.checkMachine({
-        MachineKey: MachineCode,
-      });
-      setListTeaching([0]);
-      Swal.closeModal();
-    } catch ({ response }) {
-      setListTeaching(null);
-      Swal.fire({
-        icon: "error",
-        title: "Xảy ra lỗi !",
-        html: `<div>Không thể đăng ký truy cập cho máy tính này. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${response.data.error}</div>`,
-        customClass: {
-          confirmButton: "btn btn-success",
-        },
-        allowOutsideClick: false,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = "/";
+      } else {
+        const { error } = await TeachingCrud.checkMachine({
+          MachineKey: MachineCode,
+        });
+        if (error) {
+          SwlNotAccess(error);
+        } else {
+          setShowTeaching(true);
+          Swal.closeModal();
         }
-      });
+      }
+    } catch ({ response }) {
+      SwlNotAccess(response.data.error);
     }
   };
 
-  return <Fragment>{listTeaching ? <TeachingList /> : ""}</Fragment>;
+  const SwlNotAccess = (error) => {
+    setShowTeaching(false);
+    Swal.fire({
+      icon: "error",
+      title: "Xảy ra lỗi !",
+      html: `<div>Không thể đăng ký truy cập cho máy tính này. Vui lòng liên hệ quản trị viên.<div><div class="text-danger font-size-xs font-weight-boldest">ERROR : ${error}</div>`,
+      customClass: {
+        confirmButton: "btn btn-success",
+      },
+      allowOutsideClick: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/";
+      }
+    });
+  };
+  return <Fragment>{ShowTeaching ? <TeachingList /> : ""}</Fragment>;
 }
 
 export default TeachingPage;

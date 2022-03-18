@@ -1,14 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const Token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUb2tlbklEIjoiNDA3IiwibmJmIjoxNjM3NjUwMzI2LCJleHAiOjE2NjkxODYzMjYsImlhdCI6MTYzNzY1MDMyNn0.zBRcX81S4wl3Tt2l8458TBibmp2VjlCspAAi5TkHA0A";
-
 const initialState = {
-    Token:
-        !process.env.NODE_ENV || process.env.NODE_ENV === "development" ?
-        Token : window.Token,
+    Token: window.Token,
     MachineCode: localStorage.getItem("_MachineCode") || "",
-    MachineUser: (window.User && window.User.MachineKey) || "",
+    MachineUser: (window.User && window.User.MachineKey) || "mj5WBF0JDwc4R9apHmya",
+    Info: window.Info || { User: { ID: 3799 } }
 };
 
 export const authSlice = createSlice({
@@ -23,9 +19,15 @@ export const authSlice = createSlice({
                 MachineUser: action.payload,
             };
         },
+        setToken: (state, action) => {
+            return {
+                ...state,
+                Token: action.payload
+            }
+        }
     },
 });
 
-export const { setMachine } = authSlice.actions;
+export const { setMachine, setToken } = authSlice.actions;
 
 export default authSlice.reducer;
