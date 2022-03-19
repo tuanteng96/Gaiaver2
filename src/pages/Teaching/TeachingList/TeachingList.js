@@ -11,6 +11,9 @@ import Swal from "sweetalert2";
 import ModalTeaching from "./ModalTeaching/ModalTeaching";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLessons } from "../_redux/teachingSlice";
+import moment from "moment";
+import "moment/locale/vi";
+moment.locale("vi");
 
 function TeachingList(props) {
   const [keyTab, setKetTab] = useState("");
@@ -20,7 +23,7 @@ function TeachingList(props) {
   const [CurrentKTT, setCurrentKTT] = useState(null);
   const dispatch = useDispatch();
   const { UserID, errorFetchLessons, Programs } = useSelector((state) => ({
-    UserID: state.auth.Info.User.ID,
+    UserID: state.auth.Info?.User?.ID,
     errorFetchLessons: state.teaching.error.fetchLessons,
     Programs: state.teaching.Programs,
   }));
@@ -56,6 +59,7 @@ function TeachingList(props) {
   }, [errorFetchLessons]);
 
   useEffect(() => {
+    //console.log(Programs);
     const { truong } = Programs;
     if (truong && Array.isArray(truong)) {
       var newPrograms = [];
@@ -65,14 +69,16 @@ function TeachingList(props) {
             var newLesson = [];
             if (prog.bai_giang && prog.bai_giang.length > 0) {
               for (var less of prog.bai_giang) {
-                const classLess = less.lop;
-                const indexClass = newLesson.findIndex(
-                  (sub) => sub.Class === classLess
-                );
-                if (indexClass === -1) {
-                  newLesson.push({ Class: classLess, bai_giang: [less] });
-                } else {
-                  newLesson[indexClass].bai_giang.push(less);
+                if (CheckExpire(less)) {
+                  const classLess = less.lop;
+                  const indexClass = newLesson.findIndex(
+                    (sub) => sub.Class === classLess
+                  );
+                  if (indexClass === -1) {
+                    newLesson.push({ Class: classLess, bai_giang: [less] });
+                  } else {
+                    newLesson[indexClass].bai_giang.push(less);
+                  }
                 }
               }
             }
@@ -103,7 +109,13 @@ function TeachingList(props) {
     setIsModal(false);
   };
 
-  console.log(ListKTT);
+  const CheckExpire = ({ tu_ngay, den_ngay }) => {
+    return (
+      moment().diff(den_ngay, "days") < 1 && moment().diff(tu_ngay, "days") >= 0
+    );
+  };
+
+  //console.log(ListKTT);
 
   if (errorFetchLessons) return "";
 
@@ -193,66 +205,68 @@ function TeachingList(props) {
                 </div>
               </div>
               <Tab.Content>
-                {CurrentKTT.Classs && CurrentKTT.Classs.length > 0
-                  ? CurrentKTT.Classs.map((item, index) => (
-                      <Tab.Pane eventKey={`key-${item.Class}`} key={index}>
-                        <div className="card card-custom">
-                          <div className="card-body">
-                            <div className="row pb-6">
-                              {item.bai_giang.map((lesson, idx) => {
-                                return (
-                                  <div
-                                    className="col-xl-3 col-lg-6 col-md-6 col-sm-6"
-                                    key={idx}
-                                  >
-                                    <div className="lesson-list__item">
-                                      <div className="image py-0">
-                                        <img
-                                          src={toAbsoluteUrlSv(
-                                            `upload/image/${lesson.thumbnail}`
-                                          )}
-                                          alt={lesson.ten}
-                                        />
-                                        <div className="lesson-list__btn">
-                                          <button
-                                            className="lesson-btn cursor-pointer"
-                                            type="button"
-                                            onClick={() =>
-                                              onOpenModal({
-                                                ...lesson,
-                                                type: "LessonBG",
-                                              })
-                                            }
-                                          >
-                                            Mở bài giảng
-                                          </button>
-                                          <button
-                                            className="lesson-btn cursor-pointer"
-                                            type="button"
-                                            onClick={() =>
-                                              onOpenModal({
-                                                ...lesson,
-                                                type: "LessonGA",
-                                              })
-                                            }
-                                          >
-                                            Xem giáo án
-                                          </button>
-                                        </div>
-                                      </div>
-                                      <div className="title pt-4">
-                                        {lesson.ten}
+                {CurrentKTT.Classs && CurrentKTT.Classs.length > 0 ? (
+                  CurrentKTT.Classs.map((item, index) => (
+                    <Tab.Pane eventKey={`key-${item.Class}`} key={index}>
+                      <div className="card card-custom">
+                        <div className="card-body">
+                          <div className="row pb-6">
+                            {item.bai_giang.map((lesson, idx) => {
+                              return (
+                                <div
+                                  className="col-xl-3 col-lg-6 col-md-6 col-sm-6"
+                                  key={idx}
+                                >
+                                  <div className="lesson-list__item">
+                                    <div className="image py-0">
+                                      <img
+                                        src={toAbsoluteUrlSv(
+                                          `upload/image/${lesson.thumbnail}`
+                                        )}
+                                        alt={lesson.ten}
+                                      />
+                                      <div className="lesson-list__btn">
+                                        <button
+                                          className="lesson-btn cursor-pointer"
+                                          type="button"
+                                          onClick={() =>
+                                            onOpenModal({
+                                              ...lesson,
+                                              type: "LessonBG",
+                                            })
+                                          }
+                                        >
+                                          Mở bài giảng
+                                        </button>
+                                        <button
+                                          className="lesson-btn cursor-pointer"
+                                          type="button"
+                                          onClick={() =>
+                                            onOpenModal({
+                                              ...lesson,
+                                              type: "LessonGA",
+                                            })
+                                          }
+                                        >
+                                          Xem giáo án
+                                        </button>
                                       </div>
                                     </div>
+                                    <div className="title pt-4">
+                                      {lesson.ten}
+                                    </div>
                                   </div>
-                                );
-                              })}
-                            </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
-                      </Tab.Pane>
-                    ))
-                  : "Không có bài giảng trong lớp này."}
+                      </div>
+                    </Tab.Pane>
+                  ))
+                ) : (
+                  <div className="p-5">Không có bài giảng trong lớp này.</div>
+                )}
               </Tab.Content>
             </Tab.Container>
           )}

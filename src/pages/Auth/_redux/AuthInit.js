@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { LayoutSplashScreen } from "../../../layout/_core/EzsSplashScreen";
-import { setToken } from "./authSlice";
+import { setMachineUser, setToken, setUserInfo } from "./authSlice";
 
-const tokenFake =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUb2tlbklEIjoiNjA4IiwibmJmIjoxNjQ3NTk3MDkwLCJleHAiOjE2NzkxMzMwOTAsImlhdCI6MTY0NzU5NzA5MH0.ZDkd5cgVEpWHUlxXVWzM7-d3O-Vss46vrYs1ntDFEzc";
+window.Info = { User: { ID: 3803 } };
+window.Token =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUb2tlbklEIjoiNjIwIiwibmJmIjoxNjQ3Njc5NDIyLCJleHAiOjE2NzkyMTU0MjIsImlhdCI6MTY0NzY3OTQyMn0.8C2vHsMVt9j2TPVthqoPLKeP0VPX9Nnl7vMBkqWPJKg";
+window.User = {
+  MachineKey: "mj5WBF0JDwc4R9apHmya",
+};
 
 function AuthInit(props) {
   const dispatch = useDispatch();
@@ -12,13 +16,26 @@ function AuthInit(props) {
 
   // We should request user by authToken before rendering the application
 
-  useEffect(() => {
-    const requestUser = () => {
-      dispatch(setToken(window.Token || tokenFake));
+  const requestUser = async () => {
+    function checkInfo(fn) {
+      if (!window.Info) {
+        setTimeout(() => {
+          checkInfo(fn);
+        }, 50);
+      } else {
+        fn();
+      }
+    }
+    checkInfo(() => {
+      dispatch(setToken(window.Token));
+      dispatch(setUserInfo(window.Info));
+      dispatch(setMachineUser(window.User.MachineKey));
       setShowSplashScreen(false);
-    };
+    });
+  };
 
-    if (window.Token || tokenFake) {
+  useEffect(() => {
+    if (window.Token) {
       // Xử lí
       requestUser();
     } else {

@@ -108,67 +108,15 @@ function TeachingPage(props) {
         .then((fp) => fp.get())
         .then(async (result) => {
           const { visitorId } = result;
-          const action = setMachine(visitorId);
-          dispatch(action);
+          if (visitorId === MachineUser) {
+            const action = setMachine(visitorId);
+            dispatch(action);
+          } else {
+            SwlForbidden();
+          }
         });
     } else if (MachineUser !== MachineCode) {
-      Swal.fire({
-        title: "Truy cập bị cấm",
-        html: `<div class="p-1">
-        <div class="mb-3">
-          Tài khoản của bạn đã đăng ký sử dụng chức năng Dạy học Online trên một
-          máy tính khác. Vui lòng sử dụng máy tính đã đăng ký để sử dụng hoặc Yêu
-          cầu cấp quyền truy cập thay thế cho máy tính đang sử dụng theo form bên
-          dưới
-        </div>
-        <input
-          class="form-control"
-          placeholder="Lý do"
-          id="val-input"
-        />
-      </div>`,
-        icon: "error",
-        showCancelButton: true,
-        confirmButtonText: "Xin cấp quyền truy cập",
-        showLoaderOnConfirm: true,
-        preConfirm: function() {
-          const val = document.getElementById("val-input").value; // Get value input
-          return new Promise(function(resolve, reject) {
-            TeachingCrud.sendPermission({ UserDesc: val })
-              .then((data) => {
-                resolve();
-              })
-              .catch((error) => console.log(error));
-          });
-        },
-        cancelButtonText: "Đóng",
-        reverseButtons: true,
-        buttonsStyling: false,
-        allowOutsideClick: false,
-        customClass: {
-          confirmButton: "btn btn-success",
-          cancelButton: "btn btn-danger",
-        },
-      }).then((result) => {
-        const { isDismissed } = result; //check isDismissed trả về kết quả là gì nếu nó "true" thì chạy lệnh dưới và ngược lại
-        if (isDismissed) {
-          window.location.href = "/";
-        } else {
-          // Thông báo đợi cấp
-          Swal.fire({
-            title: "Yêu cầu cấp quyền truy cập thay thế thành công",
-            text:
-              "Hệ thống đã tiếp nhận thông tin và đang tiến hành xử lý và phản hồi sớm lại bạn.",
-            icon: "info",
-            allowOutsideClick: false,
-            customClass: {
-              confirmButton: "btn btn-success",
-            },
-          }).then((result) => {
-            window.location.href = "/";
-          });
-        }
-      });
+      SwlForbidden();
     } else {
       try {
         const { error } = await TeachingCrud.checkMachine({
@@ -230,6 +178,67 @@ function TeachingPage(props) {
       }
     });
   };
+
+  const SwlForbidden = () => {
+    Swal.fire({
+      title: "Truy cập bị cấm",
+      html: `<div class="p-1">
+        <div class="mb-3">
+          Tài khoản của bạn đã đăng ký sử dụng chức năng Dạy học Online trên một
+          máy tính khác. Vui lòng sử dụng máy tính đã đăng ký để sử dụng hoặc Yêu
+          cầu cấp quyền truy cập thay thế cho máy tính đang sử dụng theo form bên
+          dưới
+        </div>
+        <input
+          class="form-control"
+          placeholder="Lý do"
+          id="val-input"
+        />
+      </div>`,
+      icon: "error",
+      showCancelButton: true,
+      confirmButtonText: "Xin cấp quyền truy cập",
+      showLoaderOnConfirm: true,
+      preConfirm: function() {
+        const val = document.getElementById("val-input").value; // Get value input
+        return new Promise(function(resolve, reject) {
+          TeachingCrud.sendPermission({ UserDesc: val })
+            .then((data) => {
+              resolve();
+            })
+            .catch((error) => console.log(error));
+        });
+      },
+      cancelButtonText: "Đóng",
+      reverseButtons: true,
+      buttonsStyling: false,
+      allowOutsideClick: false,
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger",
+      },
+    }).then((result) => {
+      const { isDismissed } = result; //check isDismissed trả về kết quả là gì nếu nó "true" thì chạy lệnh dưới và ngược lại
+      if (isDismissed) {
+        window.location.href = "/";
+      } else {
+        // Thông báo đợi cấp
+        Swal.fire({
+          title: "Yêu cầu cấp quyền truy cập thay thế thành công",
+          text:
+            "Hệ thống đã tiếp nhận thông tin và đang tiến hành xử lý và phản hồi sớm lại bạn.",
+          icon: "info",
+          allowOutsideClick: false,
+          customClass: {
+            confirmButton: "btn btn-success",
+          },
+        }).then((result) => {
+          window.location.href = "/";
+        });
+      }
+    });
+  };
+
   return <Fragment>{ShowTeaching ? <TeachingList /> : ""}</Fragment>;
 }
 

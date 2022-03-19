@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     Token: window.Token,
     MachineCode: localStorage.getItem("_MachineCode") || "",
-    MachineUser: (window.User && window.User.MachineKey) || "mj5WBF0JDwc4R9apHmya",
-    Info: window.Info || { User: { ID: 3799 } }
+    MachineUser: (window.User && window.User.MachineKey) || "",
+    Info: window.Info
 };
 
 export const authSlice = createSlice({
@@ -24,10 +24,22 @@ export const authSlice = createSlice({
                 ...state,
                 Token: action.payload
             }
+        },
+        setUserInfo: (state, action) => {
+            return {
+                ...state,
+                Info: action.payload
+            }
+        },
+        setMachineUser: (state, action) => {
+            return {
+                ...state,
+                MachineUser: action.payload
+            }
         }
     },
 });
 
-export const { setMachine, setToken } = authSlice.actions;
+export const { setMachine, setToken, setUserInfo, setMachineUser } = authSlice.actions;
 
 export default authSlice.reducer;
