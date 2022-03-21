@@ -3,12 +3,12 @@ import { useDispatch } from "react-redux";
 import { LayoutSplashScreen } from "../../../layout/_core/EzsSplashScreen";
 import { setMachineUser, setToken, setUserInfo } from "./authSlice";
 
-window.Info = { User: { ID: 3803 } };
-window.Token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUb2tlbklEIjoiNjIwIiwibmJmIjoxNjQ3Njc5NDIyLCJleHAiOjE2NzkyMTU0MjIsImlhdCI6MTY0NzY3OTQyMn0.8C2vHsMVt9j2TPVthqoPLKeP0VPX9Nnl7vMBkqWPJKg";
-window.User = {
-  MachineKey: "mj5WBF0JDwc4R9apHmya",
-};
+// window.Info = { User: { ID: 3803 } };
+// window.Token =
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUb2tlbklEIjoiNjIwIiwibmJmIjoxNjQ3Njc5NDIyLCJleHAiOjE2NzkyMTU0MjIsImlhdCI6MTY0NzY3OTQyMn0.8C2vHsMVt9j2TPVthqoPLKeP0VPX9Nnl7vMBkqWPJKg";
+// window.User = {
+//   MachineKey: "mj5WBF0JDwc4R9apHmya",
+// };
 
 function AuthInit(props) {
   const dispatch = useDispatch();

@@ -60,13 +60,18 @@ function TeachingList(props) {
 
   useEffect(() => {
     //console.log(Programs);
-    const { truong } = Programs;
-    if (truong && Array.isArray(truong)) {
+    const { truong, tai_khoan } = Programs;
+    if (truong && Array.isArray(truong) && tai_khoan.khoi_hoc) {
+      const new_khoi_hoc = tai_khoan.khoi_hoc.split(",");
       var newPrograms = [];
+
       for (const program of truong) {
         if (program.chuong_trinh && Array.isArray(program.chuong_trinh)) {
           for (const prog of program.chuong_trinh) {
-            var newLesson = [];
+            var newLesson = new_khoi_hoc.map((item) => ({
+              Class: Number(item),
+              bai_giang: [],
+            }));
             if (prog.bai_giang && prog.bai_giang.length > 0) {
               for (var less of prog.bai_giang) {
                 if (CheckExpire(less)) {
@@ -74,9 +79,7 @@ function TeachingList(props) {
                   const indexClass = newLesson.findIndex(
                     (sub) => sub.Class === classLess
                   );
-                  if (indexClass === -1) {
-                    newLesson.push({ Class: classLess, bai_giang: [less] });
-                  } else {
+                  if (indexClass > -1) {
                     newLesson[indexClass].bai_giang.push(less);
                   }
                 }
@@ -88,10 +91,10 @@ function TeachingList(props) {
       }
       if (newPrograms && newPrograms.length > 0) {
         if (
-          Array.isArray(newPrograms[0]?.khoi_hoc) &&
-          newPrograms[0].khoi_hoc.length > 0
+          Array.isArray(newPrograms[0]?.Classs) &&
+          newPrograms[0].Classs.length > 0
         ) {
-          setKetTab(newPrograms[0].khoi_hoc[0]);
+          setKetTab(newPrograms[0].Classs[0]?.Class);
         }
         setCurrentKTT(newPrograms[0]);
       }
@@ -175,18 +178,18 @@ function TeachingList(props) {
                         setKetTab(selectedKey.replace("key-", ""));
                       }}
                     >
-                      {CurrentKTT.khoi_hoc &&
-                        CurrentKTT.khoi_hoc.map((item, index) => (
+                      {CurrentKTT.Classs &&
+                        CurrentKTT.Classs.map((item, index) => (
                           <Nav.Link
                             className={`btn mx-1 font-weight-bold ${
-                              `key-${keyTab}` === `key-${item}`
+                              `key-${keyTab}` === `key-${item.Class}`
                                 ? "btn-light-success"
                                 : "btn-light"
                             }`}
-                            eventKey={`key-${item}`}
+                            eventKey={`key-${item.Class}`}
                             key={index}
                           >
-                            Khối {item}
+                            Khối {item.Class}
                           </Nav.Link>
                         ))}
                     </Nav>
@@ -211,8 +214,8 @@ function TeachingList(props) {
                       <div className="card card-custom">
                         <div className="card-body">
                           <div className="row pb-6">
-                            {item.bai_giang.map((lesson, idx) => {
-                              return (
+                            {item.bai_giang && item.bai_giang.length > 0 ? (
+                              item.bai_giang.map((lesson, idx) => (
                                 <div
                                   className="col-xl-3 col-lg-6 col-md-6 col-sm-6"
                                   key={idx}
@@ -257,8 +260,12 @@ function TeachingList(props) {
                                     </div>
                                   </div>
                                 </div>
-                              );
-                            })}
+                              ))
+                            ) : (
+                              <div className="p-5">
+                                Không có bài giảng trong lớp này.
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
