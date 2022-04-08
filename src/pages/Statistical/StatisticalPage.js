@@ -64,25 +64,31 @@ function StatisticalPage(props) {
     const params = getRequestParams(filters);
 
     StatisticalCrud.getList(params, R_Token)
-      .then(({ data }) => {
-        let newTasks =
-          data && data.length > 0 ? data.filter((item) => !item.User) : null;
-        if (newTasks && newTasks.length > 0) newTasks = newTasks[0].Tasks;
-        else {
-          newTasks = {};
+      .then(({ data, error }) => {
+        if (error) {
+          showErrorPermiss();
         }
-        const newList =
-          data && data.length > 0 ? data.filter((item) => item.User) : [];
+        else {
+          let newTasks =
+            data && data.length > 0 ? data.filter((item) => !item.User) : null;
+          if (newTasks && newTasks.length > 0) newTasks = newTasks[0].Tasks;
+          else {
+            newTasks = {};
+          }
+          const newList =
+            data && data.length > 0 ? data.filter((item) => item.User) : [];
 
-        setListStatis((prev) => ({
-          ...prev,
-          Tasks: newTasks,
-          List: newList,
-          Current:
-            data && data.filter((item) => item.Tasks && item.Tasks.length > 0),
-        }));
-        setLoading(false);
-        dispatch(setPermission({}));
+          setListStatis((prev) => ({
+            ...prev,
+            Tasks: newTasks,
+            List: newList,
+            Current:
+              data &&
+              data.filter((item) => item.Tasks && item.Tasks.length > 0),
+          }));
+          setLoading(false);
+          dispatch(setPermission({}));
+        }
       })
       .catch((error) => {
         dispatch(setPermission(null));
