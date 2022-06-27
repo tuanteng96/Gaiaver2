@@ -27,7 +27,7 @@ function TeachingList(props) {
     errorFetchLessons: state.teaching.error.fetchLessons,
     Programs: state.teaching.Programs,
   }));
-
+  console.log(useSelector(state => state.auth));
   useEffect(() => {
     const objParmas = {
       _key: "",
@@ -37,6 +37,7 @@ function TeachingList(props) {
       _orders: {},
       _ignoredf: ["Status"],
     };
+    
     dispatch(fetchLessons({ data: objParmas, UserID }));
   }, [dispatch, UserID]);
 

@@ -18,7 +18,7 @@ function AuthInit(props) {
 
   const requestUser = async () => {
     function checkInfo(fn) {
-      if (!window.Info) {
+      if (!window.Info || !window.Info) {
         setTimeout(() => {
           checkInfo(fn);
         }, 50);
@@ -35,13 +35,12 @@ function AuthInit(props) {
   };
 
   useEffect(() => {
-    if (window.Token) {
+    if (!window.Token || !window.Info) {
       // Xử lí
       requestUser();
     } else {
       setShowSplashScreen(false);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return showSplashScreen ? <LayoutSplashScreen /> : <>{props.children}</>;
