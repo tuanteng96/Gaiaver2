@@ -178,7 +178,7 @@ function StatisticalFilters({ initialValues, onSubmit, loading }) {
                     <i className="fal fa-search mr-1"></i>
                     Tìm kiếm
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className={`btn btn-success w-auto ml-2 ${
                       loading
@@ -188,7 +188,7 @@ function StatisticalFilters({ initialValues, onSubmit, loading }) {
                   >
                     <i className="fal fa-file-csv"></i>
                     Xuất Excel
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
