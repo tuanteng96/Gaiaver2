@@ -5,7 +5,7 @@ import { setMachineUser, setToken, setUserInfo } from "./authSlice";
 
 // window.Info = { User: { ID: 3803 } };
 // window.Token =
-//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUb2tlbklEIjoiNjIwIiwibmJmIjoxNjQ3Njc5NDIyLCJleHAiOjE2NzkyMTU0MjIsImlhdCI6MTY0NzY3OTQyMn0.8C2vHsMVt9j2TPVthqoPLKeP0VPX9Nnl7vMBkqWPJKg";
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBdXRoMlR5cGUiOiJVc2VyRW50IiwiSUQiOiIxIiwiVG9rZW5JZCI6IjM2IiwibmJmIjoxNjYwMDE5MTQ4LCJleHAiOjE2NjA2MjM5NDgsImlhdCI6MTY2MDAxOTE0OH0.nEVDDB8dKJyCvdcN1L6mMUtQUq6C1FcJOIM3bhn4nV8";
 // window.User = {
 //   MachineKey: "mj5WBF0JDwc4R9apHmya",
 // };

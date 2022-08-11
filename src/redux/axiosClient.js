@@ -1,9 +1,9 @@
 import axios from 'axios';
 import queryString from 'query-string';
-
+import { DevHelpers } from '../_ezs/_helpers/DevHelpers';
 
 const axiosClient = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL: DevHelpers.isDevelopment() ? process.env.REACT_APP_API_URL : '',
     // headers: {
     //     'content-type': 'text/plain',
     //     "Set-Cookie": "promo_shown=1; SameSite=Lax"
