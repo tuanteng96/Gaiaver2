@@ -157,14 +157,14 @@ function FormMissionReport({ onSubmit, defaultValue, isLoading, Points }) {
                 />
               </div>
 
-              {moment().isAfter(defaultValue.DeadLine) && (
+              {/* {moment().isAfter(defaultValue.DeadLine) && (
                 <div className="mb-5">
                   Báo cáo đã
                   <code className="font-weight-bolder">hết hạn nộp</code>, bạn
                   không thể nộp báo cáo. Liên hệ
                   <code className="py-1">Quản trị viên</code>nếu bạn cần hỗ trợ.
                 </div>
-              )}
+              )} */}
 
               <button
                 className={`btn btn-gaia font-size-lg py-3 w-auto ${
@@ -172,7 +172,7 @@ function FormMissionReport({ onSubmit, defaultValue, isLoading, Points }) {
                     ? "spinner spinner-white spinner-right pl-6 disabled"
                     : "px-6"
                 } ${
-                  moment().isAfter(defaultValue.DeadLine) || Points
+                  Points
                     ? "disabled"
                     : ""
                 }`}

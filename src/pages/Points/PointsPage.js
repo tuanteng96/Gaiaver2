@@ -22,6 +22,8 @@ moment.locale("vi");
 // PointsPage.propTypes = {
 
 //};
+// giờ delnine - giờ nộp
+console.log(moment("2022-11-04T17:04:03").isSameOrAfter("2022-11-04T17:04:04"))
 
 const showErrorPermiss = () => {
   Swal.fire({
@@ -366,7 +368,16 @@ function PointsPage(props) {
       dataField: `CreateDate`,
       text: "Ngày nộp",
       formatter: (cell, row) => (
-        <>{moment(row.CreateDate).format("HH:mm:ss DD/MM/YYYY")}</>
+        <>
+          <div>{moment(row.CreateDate).format("HH:mm:ss DD/MM/YYYY")}</div>
+          {
+            moment(row.Task.DeadLine).isSameOrAfter(row.CreateDate) && (
+              <span className="label label-warning label-pill label-inline">
+                Quá hạn nộp
+              </span>
+            )
+          }
+        </>
       ),
       headerStyle: () => {
         return { minWidth: "150px", fontWeight: "800"};
@@ -376,7 +387,7 @@ function PointsPage(props) {
     {
       dataField: `Status`,
       text: "Trạng thái",
-      formatter: (cell, row) => renderStatus(row),
+      formatter: (cell, row) => <>{renderStatus(row)}</>,
       headerAlign: "center",
       style: { textAlign: "center" },
       headerStyle: () => {
@@ -389,7 +400,7 @@ function PointsPage(props) {
       text: "#",
       formatter: (cell, row) => {
         return (
-          <div className="text-right">
+          <div className="text-center">
             <button
               type="button"
               className="btn btn-gaia btn-sm"
