@@ -371,7 +371,7 @@ function PointsPage(props) {
         <>
           <div>{moment(row.CreateDate).format("HH:mm:ss DD/MM/YYYY")}</div>
           {
-            moment(row.Task.DeadLine).isSameOrAfter(row.CreateDate) && (
+            moment(row.CreateDate).isSameOrAfter(row.Task.DeadLine) && (
               <span className="label label-warning label-pill label-inline">
                 Quá hạn nộp
               </span>
